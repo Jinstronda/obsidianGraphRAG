@@ -68,4 +68,22 @@ colorama>=0.4.6
 requests>=2.31.0
 
 # Web interface
-flask>=2.3.0 
+flask>=2.3.0
+
+# NEW: Enhanced Graph RAG Dependencies
+# =====================================
+
+# Hybrid search capabilities
+rank-bm25>=0.2.2  # For BM25 full-text search
+
+# Advanced clustering algorithms
+leidenalg>=0.10.0  # Leiden algorithm for better community detection
+
+# Tensor operations and reranking
+torch>=2.0.0  # For tensor-based operations
+transformers>=4.30.0  # For advanced embedding models
+sentence-transformers>=2.2.0  # For sentence embeddings
+
+# Additional ML libraries for enhanced features  
+datasets>=2.14.0  # For handling datasets
+accelerate>=0.20.0  # For faster inference 

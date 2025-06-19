@@ -133,6 +133,37 @@ class GraphRAGConfig:
     max_graph_hops: int = 2
     rerank_results: bool = True
     
+    # NEW: Enhanced retrieval settings
+    enable_hybrid_search: bool = field(default_factory=lambda: os.getenv("ENABLE_HYBRID_SEARCH", "false").lower() == "true")
+    enable_dynamic_retrieval: bool = field(default_factory=lambda: os.getenv("ENABLE_DYNAMIC_RETRIEVAL", "false").lower() == "true")
+    enable_community_summarization: bool = field(default_factory=lambda: os.getenv("ENABLE_COMMUNITY_SUMMARIZATION", "false").lower() == "true")
+    enable_tensor_reranking: bool = field(default_factory=lambda: os.getenv("ENABLE_TENSOR_RERANKING", "false").lower() == "true")
+    enable_lazy_graphrag: bool = field(default_factory=lambda: os.getenv("ENABLE_LAZY_GRAPHRAG", "false").lower() == "true")
+    
+    # Hybrid search settings
+    bm25_weight: float = 0.3  # Weight for BM25 vs vector search
+    sparse_vector_weight: float = 0.2  # Weight for sparse vectors
+    
+    # Advanced clustering settings
+    use_leiden_clustering: bool = field(default_factory=lambda: os.getenv("USE_LEIDEN_CLUSTERING", "false").lower() == "true")
+    leiden_resolution: float = 1.0
+    leiden_iterations: int = 10
+    
+    # Community summarization settings
+    max_community_size: int = 20  # Max entities per community summary
+    community_summary_model: str = "gpt-4o-mini"  # Cheaper model for summaries
+    generate_hierarchical_summaries: bool = True
+    
+    # Tensor reranking settings
+    reranking_model: str = "jinaai/jina-colbert-v2"  # ColBERT-style model
+    enable_late_interaction: bool = True
+    tensor_rerank_top_k: int = 50  # Rerank top K results
+    
+    # Multi-granular indexing settings
+    enable_multi_granular: bool = field(default_factory=lambda: os.getenv("ENABLE_MULTI_GRANULAR", "false").lower() == "true")
+    skeleton_graph_ratio: float = 0.1  # Percentage of docs in skeleton
+    keyword_bipartite_features: int = 1000  # Max features for keyword graph
+    
     # Sequential thinking settings
     enable_sequential_thinking: bool = True
     max_reasoning_steps: int = 5
@@ -1337,7 +1368,7 @@ class ObsidianGraphRAG:
         
         return None
 
-    def start_chat_session(self) -> None:
+    async def start_chat_session(self) -> None:
         """
         Start an interactive chat session with the AI librarian.
         
@@ -1352,12 +1383,16 @@ class ObsidianGraphRAG:
             if not self.client:
                 raise ValueError("OpenAI client not available. Please set your API key.")
             
-            # Initialize chat bot
+            # Initialize chat bot with enhanced features
             chat_bot = ObsidianChatBot(self)
             chat_bot.initialize()
             
+            # Setup enhanced features in retriever
+            if hasattr(chat_bot.retriever, 'setup_enhanced_features'):
+                await chat_bot.retriever.setup_enhanced_features(self.documents, self.knowledge_graph)
+            
             # Start chat session
-            chat_bot.start_chat()
+            await chat_bot.start_chat()
             
         except Exception as e:
             self.logger.error(f"Error starting chat session: {e}")
@@ -2266,39 +2301,149 @@ class EmbeddingManager:
 
 class GraphRAGRetriever:
     """
-    Implements Graph RAG retrieval combining semantic search with graph traversal.
+    Enhanced Graph RAG retrieval combining multiple search strategies.
     
     This class orchestrates the hybrid retrieval approach:
     1. Semantic search to find initially relevant documents
     2. Graph traversal through wiki-links to expand context
     3. Ranking and filtering of combined results
     
+    NEW ENHANCED FEATURES:
+    4. Hybrid search (Vector + BM25 + Sparse)
+    5. Dynamic retrieval strategy selection
+    6. Tensor-based reranking
+    7. Community-based global search
+    8. Multi-granular indexing
+    
     This approach leverages both the semantic meaning of content and the
     explicit relationships encoded in Obsidian's wiki-link structure.
     """
     
-    def __init__(self, config: GraphRAGConfig):
+    def __init__(self, config: GraphRAGConfig, client=None):
         """
-        Initialize the Graph RAG retriever.
+        Initialize the enhanced Graph RAG retriever.
         
         Args:
             config: Graph RAG configuration
+            client: OpenAI client for enhanced features
         """
         self.config = config
+        self.client = client
         self.logger = logging.getLogger(__name__)
         
-    def retrieve_context(self, 
-                        query: str,
-                        documents: Dict[str, Document],
-                        knowledge_graph: nx.Graph,
-                        embedding_manager: EmbeddingManager) -> List[Document]:
-        """
-        Retrieve relevant documents using Graph RAG approach.
+        # Enhanced components (initialized on first use)
+        self.hybrid_search_manager = None
+        self.clustering_manager = None
+        self.community_manager = None
+        self.tensor_reranker = None
+        self.dynamic_retrieval_manager = None
+        self.lazy_graphrag_manager = None
+        self.multi_granular_manager = None
         
-        This method implements the core Graph RAG algorithm:
-        1. Find semantically similar documents using vector search
-        2. Expand context by traversing graph connections (wiki-links)
-        3. Combine and rank results for optimal context
+        # Community summaries cache
+        self.community_summaries = {}
+        
+        # Initialize enhanced components if enabled
+        self._initialize_enhanced_components()
+    
+    def _initialize_enhanced_components(self):
+        """Initialize enhanced Graph RAG components if enabled."""
+        try:
+            # Import enhanced components
+            from enhanced_graphrag import (
+                HybridSearchManager, AdvancedClusteringManager, 
+                CommunitySummarizationManager, TensorRerankingManager,
+                DynamicRetrievalManager, LazyGraphRAGManager,
+                MultiGranularIndexManager
+            )
+            
+            # Initialize components based on configuration
+            if self.config.enable_hybrid_search:
+                self.hybrid_search_manager = HybridSearchManager(self.config)
+                self.logger.info("Hybrid search manager initialized")
+            
+            if self.config.use_leiden_clustering:
+                self.clustering_manager = AdvancedClusteringManager(self.config)
+                self.logger.info("Advanced clustering manager initialized")
+            
+            if self.config.enable_community_summarization and self.client:
+                self.community_manager = CommunitySummarizationManager(self.config, self.client)
+                self.logger.info("Community summarization manager initialized")
+            
+            if self.config.enable_tensor_reranking:
+                self.tensor_reranker = TensorRerankingManager(self.config)
+                self.logger.info("Tensor reranking manager initialized")
+            
+            if self.config.enable_dynamic_retrieval and self.client:
+                self.dynamic_retrieval_manager = DynamicRetrievalManager(self.config, self.client)
+                self.logger.info("Dynamic retrieval manager initialized")
+            
+            if self.config.enable_lazy_graphrag and self.client:
+                self.lazy_graphrag_manager = LazyGraphRAGManager(self.config, self.client)
+                self.logger.info("LazyGraphRAG manager initialized")
+            
+            if self.config.enable_multi_granular:
+                self.multi_granular_manager = MultiGranularIndexManager(self.config)
+                self.logger.info("Multi-granular index manager initialized")
+                
+        except ImportError as e:
+            self.logger.warning(f"Enhanced components not available: {e}")
+        except Exception as e:
+            self.logger.error(f"Error initializing enhanced components: {e}")
+    
+    async def setup_enhanced_features(self, documents: Dict[str, Document], 
+                                    knowledge_graph: nx.Graph):
+        """Set up enhanced features that require document data."""
+        try:
+            # Setup hybrid search with documents
+            if self.hybrid_search_manager:
+                self.hybrid_search_manager.documents = documents
+                self.hybrid_search_manager._setup_hybrid_search()
+            
+            # Generate community summaries if enabled
+            if self.community_manager and not self.community_summaries:
+                # Get communities from clustering
+                if self.clustering_manager:
+                    communities = self.clustering_manager.leiden_clustering(knowledge_graph)
+                else:
+                    # Fall back to basic clustering
+                    from community import community_louvain
+                    partition = community_louvain.best_partition(knowledge_graph)
+                    communities = {}
+                    for node, community_id in partition.items():
+                        if community_id not in communities:
+                            communities[community_id] = []
+                        communities[community_id].append(node)
+                
+                # Generate summaries
+                self.community_summaries = await self.community_manager.generate_community_summaries(
+                    communities, documents
+                )
+                self.logger.info(f"Generated {len(self.community_summaries)} community summaries")
+            
+            # Setup multi-granular indexing
+            if self.multi_granular_manager:
+                self.multi_granular_manager.full_graph = knowledge_graph
+                self.multi_granular_manager.build_skeleton_graph(knowledge_graph, documents)
+                self.multi_granular_manager.build_keyword_bipartite(documents)
+                
+        except Exception as e:
+            self.logger.error(f"Error setting up enhanced features: {e}")
+        
+    async def retrieve_context(self, 
+                              query: str,
+                              documents: Dict[str, Document],
+                              knowledge_graph: nx.Graph,
+                              embedding_manager: EmbeddingManager) -> List[Document]:
+        """
+        Enhanced retrieve relevant documents using multiple Graph RAG strategies.
+        
+        This method implements the enhanced Graph RAG algorithm:
+        1. Dynamic strategy selection (local vs global)
+        2. Hybrid search (vector + BM25 + sparse)
+        3. Graph traversal through wiki-links
+        4. Tensor-based reranking
+        5. Community-based global search
         
         Args:
             query: User's query
@@ -2310,56 +2455,235 @@ class GraphRAGRetriever:
             List of relevant documents for context
         """
         try:
-            self.logger.debug(f"Retrieving context for query: {query}")
+            self.logger.debug(f"Enhanced retrieving context for query: {query}")
             
-            # Step 1: Semantic search to find initially relevant documents
-            semantic_results = embedding_manager.search_similar_documents(
-                query, 
-                top_k=self.config.top_k_vector
+            # Step 1: Dynamic strategy selection
+            search_strategy = "LOCAL"  # Default
+            if self.dynamic_retrieval_manager:
+                search_strategy, confidence, reasoning = await self.dynamic_retrieval_manager.classify_and_route_query(query)
+                self.logger.debug(f"Query classified as {search_strategy} (confidence: {confidence:.2f})")
+            
+            # Step 2: Choose retrieval approach based on strategy
+            if search_strategy == "GLOBAL" and self.community_summaries:
+                return await self._global_search(query, documents, knowledge_graph, embedding_manager)
+            else:
+                return await self._local_search(query, documents, knowledge_graph, embedding_manager)
+                
+        except Exception as e:
+            self.logger.error(f"Error in enhanced Graph RAG retrieval: {e}")
+            # Fall back to original method
+            return self._fallback_retrieve_context(query, documents, knowledge_graph, embedding_manager)
+    
+    async def _local_search(self, query: str, documents: Dict[str, Document],
+                           knowledge_graph: nx.Graph, embedding_manager: EmbeddingManager) -> List[Document]:
+        """Enhanced local search for entity-focused queries."""
+        
+        # Step 1: Get initial semantic results
+        semantic_results = embedding_manager.search_similar_documents(
+            query, 
+            top_k=self.config.top_k_vector
+        )
+        
+        if not semantic_results:
+            self.logger.warning("No semantic search results found")
+            return []
+        
+        # Step 2: Apply hybrid search if enabled
+        from enhanced_graphrag import SearchResult
+        
+        if self.hybrid_search_manager:
+            search_results = self.hybrid_search_manager.hybrid_search(
+                query, semantic_results, top_k=self.config.top_k_vector * 2
             )
+        else:
+            # Convert to SearchResult format
+            search_results = [SearchResult(
+                document_id=doc_id,
+                content=documents.get(doc_id, {}).get('content', ''),
+                vector_score=score,
+                combined_score=score
+            ) for doc_id, score in semantic_results]
+        
+        # Step 3: Graph expansion
+        expanded_doc_ids = set()
+        
+        # Add initial results
+        for result in search_results:
+            expanded_doc_ids.add(result.document_id)
+        
+        # Graph traversal
+        for result in search_results[:self.config.top_k_vector]:  # Only expand top results
+            doc_id = result.document_id
+            if doc_id in knowledge_graph:
+                neighbors = list(knowledge_graph.neighbors(doc_id))
+                
+                for neighbor in neighbors[:self.config.top_k_graph]:
+                    expanded_doc_ids.add(neighbor)
+                    
+                    if self.config.max_graph_hops >= 2:
+                        second_hop = list(knowledge_graph.neighbors(neighbor))
+                        for second_neighbor in second_hop[:2]:
+                            expanded_doc_ids.add(second_neighbor)
+        
+        # Step 4: Multi-granular search enhancement
+        if self.multi_granular_manager:
+            multi_granular_results = self.multi_granular_manager.multi_granular_search(query, "LOCAL")
+            expanded_doc_ids.update(multi_granular_results)
+        
+        # Step 5: Apply tensor reranking if enabled
+        if self.tensor_reranker and len(search_results) > 1:
+            # Update search results with documents from graph expansion
+            all_results = []
+            for doc_id in expanded_doc_ids:
+                if doc_id in documents:
+                    # Find existing result or create new one
+                    existing = next((r for r in search_results if r.document_id == doc_id), None)
+                    if existing:
+                        all_results.append(existing)
+                    else:
+                        all_results.append(SearchResult(
+                            document_id=doc_id,
+                            content=documents[doc_id].content,
+                            combined_score=0.5  # Lower score for graph-only matches
+                        ))
+            
+            # Apply tensor reranking
+            all_results = self.tensor_reranker.rerank_results(query, all_results)
+            
+            # Update expanded_doc_ids based on reranked results
+            expanded_doc_ids = set(result.document_id for result in all_results)
+        
+        # Step 6: Collect final documents
+        context_documents = []
+        for doc_id in expanded_doc_ids:
+            if doc_id in documents:
+                context_documents.append(documents[doc_id])
+        
+        # Sort by relevance (prioritize semantic matches)
+        semantic_doc_ids = set(result.document_id for result in search_results[:self.config.top_k_vector])
+        context_documents.sort(key=lambda doc: 0 if doc.id in semantic_doc_ids else 1)
+        
+        self.logger.debug(f"Local search retrieved {len(context_documents)} documents")
+        return context_documents
+    
+    async def _global_search(self, query: str, documents: Dict[str, Document],
+                            knowledge_graph: nx.Graph, embedding_manager: EmbeddingManager) -> List[Document]:
+        """Enhanced global search using community summaries."""
+        
+        try:
+            # Step 1: Find relevant communities based on query
+            relevant_communities = []
+            
+            if self.community_summaries:
+                for community_id, community_report in self.community_summaries.items():
+                    # Simple relevance check (could be enhanced with embeddings)
+                    summary_text = f"{community_report.title} {community_report.summary}"
+                    query_words = set(query.lower().split())
+                    summary_words = set(summary_text.lower().split())
+                    
+                    # Calculate word overlap (simple relevance metric)
+                    overlap = len(query_words.intersection(summary_words))
+                    if overlap > 0 or len(query_words) == 1:  # Include if any overlap or single word query
+                        relevant_communities.append((community_id, community_report, overlap))
+            
+            # Sort by relevance
+            relevant_communities.sort(key=lambda x: x[2], reverse=True)
+            
+            # Step 2: LazyGraphRAG on-demand summaries
+            if self.lazy_graphrag_manager and relevant_communities:
+                community_docs = []
+                for community_id, community_report, _ in relevant_communities[:5]:  # Top 5 communities
+                    # Get documents from this community
+                    for entity in community_report.entities[:10]:  # Limit entities
+                        # Find documents mentioning this entity (simplified)
+                        for doc_id, doc in documents.items():
+                            if entity.lower() in doc.content.lower():
+                                community_docs.append(doc.content[:1000])  # Limit length
+                                break
+                
+                # Generate focused summary
+                if community_docs:
+                    focused_summary = await self.lazy_graphrag_manager.generate_summary_on_demand(
+                        community_docs, query
+                    )
+                    self.logger.debug(f"Generated focused summary: {focused_summary[:100]}...")
+            
+            # Step 3: Collect documents from relevant communities
+            relevant_doc_ids = set()
+            
+            for community_id, community_report, _ in relevant_communities[:3]:  # Top 3 communities
+                # Map entities back to documents (simplified approach)
+                for entity in community_report.entities[:5]:  # Top entities
+                    for doc_id, doc in documents.items():
+                        if entity.lower() in doc.content.lower() or entity.lower() in doc.title.lower():
+                            relevant_doc_ids.add(doc_id)
+            
+            # Step 4: Enhance with semantic search if few results
+            if len(relevant_doc_ids) < self.config.top_k_vector:
+                semantic_results = embedding_manager.search_similar_documents(
+                    query, top_k=self.config.top_k_vector
+                )
+                for doc_id, _ in semantic_results:
+                    relevant_doc_ids.add(doc_id)
+            
+            # Step 5: Apply multi-granular search for global queries
+            if self.multi_granular_manager:
+                multi_granular_results = self.multi_granular_manager.multi_granular_search(query, "GLOBAL")
+                relevant_doc_ids.update(multi_granular_results)
+            
+            # Step 6: Collect final documents
+            context_documents = []
+            for doc_id in relevant_doc_ids:
+                if doc_id in documents:
+                    context_documents.append(documents[doc_id])
+            
+            # Limit results for global search
+            context_documents = context_documents[:self.config.top_k_vector * 2]
+            
+            self.logger.debug(f"Global search retrieved {len(context_documents)} documents")
+            return context_documents
+            
+        except Exception as e:
+            self.logger.error(f"Error in global search: {e}")
+            # Fall back to local search
+            return await self._local_search(query, documents, knowledge_graph, embedding_manager)
+    
+    def _fallback_retrieve_context(self, query: str, documents: Dict[str, Document],
+                                  knowledge_graph: nx.Graph, embedding_manager: EmbeddingManager) -> List[Document]:
+        """Original retrieval method as fallback."""
+        try:
+            # Original implementation
+            semantic_results = embedding_manager.search_similar_documents(query, top_k=self.config.top_k_vector)
             
             if not semantic_results:
-                self.logger.warning("No semantic search results found")
                 return []
             
-            # Step 2: Expand context using graph traversal
             expanded_doc_ids = set()
-            
-            # Add initial semantic matches
             for doc_id, score in semantic_results:
                 expanded_doc_ids.add(doc_id)
             
-            # For each semantically relevant document, find connected documents
             for doc_id, score in semantic_results:
                 if doc_id in knowledge_graph:
-                    # Get neighbors (documents linked via wiki-links)
                     neighbors = list(knowledge_graph.neighbors(doc_id))
-                    
-                    # Add neighbors up to max_graph_hops
                     for neighbor in neighbors[:self.config.top_k_graph]:
                         expanded_doc_ids.add(neighbor)
-                        
-                        # Optionally add second-hop neighbors
                         if self.config.max_graph_hops >= 2:
                             second_hop = list(knowledge_graph.neighbors(neighbor))
-                            for second_neighbor in second_hop[:2]:  # Limit second-hop expansion
+                            for second_neighbor in second_hop[:2]:
                                 expanded_doc_ids.add(second_neighbor)
             
-            # Step 3: Collect and rank documents
             context_documents = []
             for doc_id in expanded_doc_ids:
                 if doc_id in documents:
                     context_documents.append(documents[doc_id])
             
-            # Sort by semantic relevance (documents found via semantic search appear first)
             semantic_doc_ids = set(doc_id for doc_id, _ in semantic_results)
             context_documents.sort(key=lambda doc: 0 if doc.id in semantic_doc_ids else 1)
             
-            self.logger.debug(f"Retrieved {len(context_documents)} documents for context")
             return context_documents
             
         except Exception as e:
-            self.logger.error(f"Error in Graph RAG retrieval: {e}")
+            self.logger.error(f"Error in fallback retrieval: {e}")
             return []
     
     def format_context_for_llm(self, documents: List[Document], max_tokens: int = 10000) -> str:
@@ -2420,9 +2744,9 @@ class ObsidianChatBot:
         self.config = graph_rag_system.config
         self.logger = logging.getLogger(__name__)
         
-        # Initialize components
+        # Initialize components with enhanced support
         self.embedding_manager = EmbeddingManager(self.config, self.system.client, self.system)
-        self.retriever = GraphRAGRetriever(self.config)
+        self.retriever = GraphRAGRetriever(self.config, self.system.client)  # Pass client for enhanced features
         
         # Conversation state
         self.conversation_history = []
@@ -2461,7 +2785,7 @@ Remember: You're helping the user explore their own knowledge - be encouraging a
             self.logger.error(f"Error initializing chat bot: {e}")
             raise
     
-    def ask_question(self, question: str) -> str:
+    async def ask_question(self, question: str) -> str:
         """
         Process a user question and generate a response.
         
@@ -2475,8 +2799,8 @@ Remember: You're helping the user explore their own knowledge - be encouraging a
             if not self.system.client:
                 return "Error: OpenAI client not available. Please set your API key."
             
-            # Retrieve relevant context using Graph RAG
-            context_documents = self.retriever.retrieve_context(
+            # Retrieve relevant context using enhanced Graph RAG
+            context_documents = await self.retriever.retrieve_context(
                 question,
                 self.system.documents,
                 self.system.knowledge_graph,
@@ -2517,7 +2841,7 @@ Remember: You're helping the user explore their own knowledge - be encouraging a
             self.logger.error(f"Error processing question: {e}")
             return f"I encountered an error while processing your question: {e}"
     
-    def start_chat(self) -> None:
+    async def start_chat(self) -> None:
         """Start the interactive chat session."""
         try:
             print("\n" + "="*60)
@@ -2543,7 +2867,7 @@ Remember: You're helping the user explore their own knowledge - be encouraging a
                     
                     # Process question and generate response
                     print("\n🤔 Thinking...")
-                    response = self.ask_question(question)
+                    response = await self.ask_question(question)
                     
                     print(f"\n🤖 AI Librarian: {response}\n")
                     print("-" * 60 + "\n")
@@ -2619,9 +2943,9 @@ async def main():
         
         # If OpenAI is available, continue with AI features
         if config.openai_api_key:
-            print("\n🤖 Starting AI Librarian Chat Interface...")
-            print("This may take a moment to generate embeddings for your notes...")
-            graph_rag.start_chat_session()
+            print("\n🤖 Starting Enhanced AI Librarian Chat Interface...")
+            print("This may take a moment to generate embeddings and setup enhanced features...")
+            await graph_rag.start_chat_session()
         else:
             print("\n⚠️  Skipping AI features due to missing OpenAI API key.")
             print("To use the AI librarian, please set your OPENAI_API_KEY environment variable and restart.")
