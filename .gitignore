@@ -7,7 +7,9 @@ data/
 logs/
 
 # Generated HTML Visualizations (can be recreated)
+# Note: HTML files in images/ folder are kept for visualization examples
 *.html
+!images/*.html
 
 # Environment and Secret Files
 .env
