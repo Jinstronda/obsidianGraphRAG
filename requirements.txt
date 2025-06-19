@@ -1,0 +1,71 @@
+# Core libraries for text processing and ML
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+networkx>=3.1
+python-community>=1.0.0  # For community detection
+
+# OpenAI and embeddings
+openai>=1.0.0
+tiktoken>=0.5.0
+
+# File monitoring and async operations
+aiofiles>=23.0.0
+watchdog>=3.0.0
+
+# Configuration and data handling
+pyyaml>=6.0
+configparser
+
+# 3D Visualization Dependencies
+fastapi>=0.104.0
+uvicorn>=0.24.0
+websockets>=12.0
+jinja2>=3.1.0  # For FastAPI templates
+
+# Scientific computing for 3D layouts
+scipy>=1.11.0
+
+# Optional: Enhanced community detection
+# python-igraph>=0.10.0  # Uncomment for better graph algorithms
+
+# Development and testing (optional)
+# pytest>=7.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+
+# Vector storage and similarity
+faiss-cpu>=1.7.4
+
+# Text processing
+spacy>=3.6.0
+nltk>=3.8.0
+
+# Data persistence
+pickle5>=0.0.11
+
+# Configuration management
+python-dotenv>=1.0.0
+
+# File monitoring
+psutil>=5.9.0
+
+# Graph analysis
+matplotlib>=3.7.0
+plotly>=5.15.0
+igraph>=0.10.0
+
+# Progress bars and UI
+tqdm>=4.65.0
+rich>=13.0.0
+
+# Async operations
+asyncio-mqtt>=0.13.0
+
+# Additional utilities
+pathlib2>=2.3.7
+colorama>=0.4.6
+requests>=2.31.0
+
+# Web interface
+flask>=2.3.0 

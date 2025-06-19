@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "Magic MCP": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@21st-dev/magic@latest",
+        "API_KEY=\"e35aa2638e567c8f717d660222e9a432de24f4a8fe728e6d7232b0f6bfb5a328\""
+      ],
+      "env": {}
+    },
+    "sequentialThinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "context7"
+      ],
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
