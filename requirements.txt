@@ -3,7 +3,7 @@ numpy>=1.24.0
 pandas>=2.0.0
 scikit-learn>=1.3.0
 networkx>=3.1
-python-community>=1.0.0  # For community detection
+python-louvain>=0.16  # For community detection
 
 # OpenAI and embeddings
 openai>=1.0.0
@@ -41,8 +41,8 @@ faiss-cpu>=1.7.4
 spacy>=3.6.0
 nltk>=3.8.0
 
-# Data persistence
-pickle5>=0.0.11
+# Data persistence (built-in pickle for Python 3.12+)
+# pickle5>=0.0.11  # Not needed for Python 3.12+
 
 # Configuration management
 python-dotenv>=1.0.0
@@ -68,7 +68,7 @@ colorama>=0.4.6
 requests>=2.31.0
 
 # Web interface
-flask>=2.3.0
+flask>=2.3.0 
 
 # NEW: Enhanced Graph RAG Dependencies
 # =====================================
@@ -86,4 +86,9 @@ sentence-transformers>=2.2.0  # For sentence embeddings
 
 # Additional ML libraries for enhanced features  
 datasets>=2.14.0  # For handling datasets
-accelerate>=0.20.0  # For faster inference 
+accelerate>=0.20.0  # For faster inference
+
+# Windows-compatible reranking models
+# ================================================
+# Using cross-encoder for reliable Windows compatibility
+# No flash-attn or custom kernels required 
