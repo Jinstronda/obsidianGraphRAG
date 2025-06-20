@@ -97,7 +97,7 @@ class GraphRAGConfig:
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     embedding_model: str = field(default_factory=lambda: os.getenv("EMBEDDING_MODEL", "text-embedding-3-small"))
     llm_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o"))  # Use GPT-4o which has 128K context
-    max_tokens: int = field(default_factory=lambda: int(os.getenv("MAX_TOKENS", "2000")))  # Reduced to leave room for context
+    max_tokens: int = field(default_factory=lambda: int(os.getenv("MAX_TOKENS", "2000").split('#')[0].strip()))
     temperature: float = field(default_factory=lambda: float(os.getenv("TEMPERATURE", "0.1")))
     
     # Text processing settings
@@ -128,9 +128,9 @@ class GraphRAGConfig:
     community_resolution: float = 1.0
     
     # Retrieval settings
-    top_k_vector: int = field(default_factory=lambda: int(os.getenv("TOP_K_VECTOR", "10")))
-    top_k_graph: int = field(default_factory=lambda: int(os.getenv("TOP_K_GRAPH", "5")))
-    max_graph_hops: int = 2
+    top_k_vector: int = field(default_factory=lambda: int(os.getenv("TOP_K_VECTOR", "10").split('#')[0].strip()))
+    top_k_graph: int = field(default_factory=lambda: int(os.getenv("TOP_K_GRAPH", "5").split('#')[0].strip()))
+    max_graph_hops: int = field(default_factory=lambda: int(os.getenv("MAX_GRAPH_HOPS", "2")))
     rerank_results: bool = True
     
     # NEW: Enhanced retrieval settings
@@ -155,7 +155,7 @@ class GraphRAGConfig:
     generate_hierarchical_summaries: bool = True
     
     # Tensor reranking settings
-    reranking_model: str = "jinaai/jina-colbert-v2"  # ColBERT-style model
+    reranking_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # Windows-compatible lightweight reranker
     enable_late_interaction: bool = True
     tensor_rerank_top_k: int = 50  # Rerank top K results
     
@@ -186,7 +186,7 @@ class GraphRAGConfig:
     
     # Web interface settings
     web_host: str = field(default_factory=lambda: os.getenv("WEB_HOST", "127.0.0.1"))
-    web_port: int = field(default_factory=lambda: int(os.getenv("WEB_PORT", "5000")))
+    web_port: int = field(default_factory=lambda: int(os.getenv("WEB_PORT", "5000").split('#')[0].strip()))
     auto_open_browser: bool = field(default_factory=lambda: os.getenv("AUTO_OPEN_BROWSER", "true").lower() == "true")
 
 
@@ -518,13 +518,15 @@ class DataPersistenceManager:
         self.config = config
         self.logger = logging.getLogger(__name__)
         
-        # Data file paths
+        # Set up cache directory
         self.data_dir = Path(config.cache_dir) / "processed_data"
         self.data_dir.mkdir(parents=True, exist_ok=True)
         
+        # Define file paths
         self.documents_file = self.data_dir / "documents.pkl"
         self.graph_file = self.data_dir / "knowledge_graph.gpickle"
         self.embeddings_file = self.data_dir / "embeddings.pkl"
+        self.community_summaries_file = self.data_dir / "community_summaries.pkl"  # NEW: Community summaries cache
         self.metadata_file = self.data_dir / "metadata.json"
     
     def detect_changes(self, vault_path: str) -> Tuple[List[Path], List[Path], List[str], bool]:
@@ -691,7 +693,8 @@ class DataPersistenceManager:
                 return False
     
     def save_data(self, documents: Dict[str, Document], knowledge_graph: nx.Graph, 
-                  embeddings: Dict[str, np.ndarray], vault_path: str) -> None:
+                  embeddings: Dict[str, np.ndarray], vault_path: str,
+                  community_summaries: Dict = None) -> None:
         """
         Save all processed data to disk.
         
@@ -700,6 +703,7 @@ class DataPersistenceManager:
             knowledge_graph: Built knowledge graph
             embeddings: Document embeddings
             vault_path: Vault path for metadata
+            community_summaries: Community summaries (optional)
         """
         try:
             self.logger.info("Saving processed data to disk...")
@@ -715,6 +719,12 @@ class DataPersistenceManager:
             # Save embeddings
             with open(self.embeddings_file, 'wb') as f:
                 pickle.dump(embeddings, f)
+            
+            # Save community summaries if provided
+            if community_summaries is not None:
+                with open(self.community_summaries_file, 'wb') as f:
+                    pickle.dump(community_summaries, f)
+                self.logger.info(f"Saved {len(community_summaries)} community summaries to cache")
             
             # Build file metadata for incremental processing
             file_metadata = {}
@@ -742,9 +752,10 @@ class DataPersistenceManager:
                 'graph_nodes': knowledge_graph.number_of_nodes(),
                 'graph_edges': knowledge_graph.number_of_edges(),
                 'embeddings_count': len(embeddings),
+                'community_summaries_count': len(community_summaries) if community_summaries else 0,  # NEW: Track summaries
                 'file_metadata': file_metadata,
                 'created_at': datetime.now().isoformat(),
-                'version': '2.0'  # Bumped version for incremental processing
+                'version': '2.1'  # Bumped version for community summary support
             }
             
             with open(self.metadata_file, 'w') as f:
@@ -771,7 +782,7 @@ class DataPersistenceManager:
         """
         try:
             # Load existing data
-            documents, knowledge_graph, embeddings = self.load_data()
+            documents, knowledge_graph, embeddings, community_summaries = self.load_data()
             
             # Initialize components for processing
             parser = MarkdownParser(graph_rag_system.config)
@@ -922,12 +933,12 @@ class DataPersistenceManager:
         
         return None
     
-    def load_data(self) -> Tuple[Dict[str, Document], nx.Graph, Dict[str, np.ndarray]]:
+    def load_data(self) -> Tuple[Dict[str, Document], nx.Graph, Dict[str, np.ndarray], Dict]:
         """
         Load all processed data from disk with improved error handling and diagnostics.
         
         Returns:
-            Tuple of (documents, knowledge_graph, embeddings)
+            Tuple of (documents, knowledge_graph, embeddings, community_summaries)
         """
         try:
             self.logger.info("Loading processed data from disk...")
@@ -939,6 +950,11 @@ class DataPersistenceManager:
                 (self.graph_file, "knowledge_graph.gpickle"),
                 (self.embeddings_file, "embeddings.pkl"),
                 (self.metadata_file, "metadata.json")
+            ]
+            
+            # Community summaries are optional for backward compatibility
+            optional_files = [
+                (self.community_summaries_file, "community_summaries.pkl")
             ]
             
             for file_path, file_name in required_files:
@@ -982,11 +998,25 @@ class DataPersistenceManager:
                 self.logger.error(f"Failed to load embeddings: {e}")
                 raise Exception(f"Cannot load embeddings.pkl: {e}")
             
+            # Load community summaries (optional)
+            community_summaries = {}
+            if self.community_summaries_file.exists():
+                try:
+                    self.logger.info(f"Loading community summaries from {self.community_summaries_file}")
+                    with open(self.community_summaries_file, 'rb') as f:
+                        community_summaries = pickle.load(f)
+                    self.logger.info(f"✓ Loaded {len(community_summaries)} community summaries from cache")
+                except Exception as e:
+                    self.logger.warning(f"Failed to load community summaries (will regenerate): {e}")
+                    community_summaries = {}
+            else:
+                self.logger.info("No cached community summaries found (will generate if needed)")
+            
             # Validate data consistency
             self._validate_loaded_data(documents, knowledge_graph, embeddings)
             
             self.logger.info("✓ All data loaded successfully!")
-            return documents, knowledge_graph, embeddings
+            return documents, knowledge_graph, embeddings, community_summaries
             
         except Exception as e:
             self.logger.error(f"Critical error loading data: {e}")
@@ -1182,6 +1212,7 @@ class ObsidianGraphRAG:
         self.entities: Dict[str, Entity] = {}
         self.relationships: Dict[str, Relationship] = {}
         self.communities: Dict[str, Community] = {}
+        self.community_summaries: Dict = {}  # NEW: Store community summaries for caching
         
         # Initialize graph
         self.knowledge_graph = nx.Graph()
@@ -1389,7 +1420,26 @@ class ObsidianGraphRAG:
             
             # Setup enhanced features in retriever
             if hasattr(chat_bot.retriever, 'setup_enhanced_features'):
-                await chat_bot.retriever.setup_enhanced_features(self.documents, self.knowledge_graph)
+                await chat_bot.retriever.setup_enhanced_features(
+                    self.documents, 
+                    self.knowledge_graph,
+                    self.community_summaries  # Pass cached summaries
+                )
+                
+                # Save any newly generated community summaries
+                new_summaries = chat_bot.retriever.get_community_summaries()
+                if new_summaries and len(new_summaries) > len(self.community_summaries):
+                    self.community_summaries = new_summaries
+                    # Save to cache
+                    persistence_manager = DataPersistenceManager(self.config)
+                    embeddings_dict = {}  # Not saving embeddings here, done separately
+                    persistence_manager.save_data(
+                        self.documents,
+                        self.knowledge_graph,
+                        embeddings_dict,
+                        self.config.vault_path,
+                        self.community_summaries
+                    )
             
             # Start chat session
             await chat_bot.start_chat()
@@ -1463,7 +1513,8 @@ class ObsidianGraphRAG:
                     # User chose to skip update - load existing data
                     try:
                         self.logger.info("Loading existing processed data...")
-                        self.documents, self.knowledge_graph, embeddings_dict = persistence_manager.load_data()
+                        self.documents, self.knowledge_graph, embeddings_dict, community_summaries = persistence_manager.load_data()
+                        self.community_summaries = community_summaries  # Store for later use
                     except Exception as load_error:
                         self.logger.error(f"Failed to load existing data: {load_error}")
                         self._handle_loading_failure(persistence_manager, load_error)
@@ -1473,7 +1524,8 @@ class ObsidianGraphRAG:
                 # No changes detected - load existing data
                 try:
                     self.logger.info("No changes detected, loading existing processed data...")
-                    self.documents, self.knowledge_graph, embeddings_dict = persistence_manager.load_data()
+                    self.documents, self.knowledge_graph, embeddings_dict, community_summaries = persistence_manager.load_data()
+                    self.community_summaries = community_summaries  # Store for later use
                 except Exception as load_error:
                     self.logger.error(f"Failed to load existing data: {load_error}")
                     self._handle_loading_failure(persistence_manager, load_error)
@@ -2392,7 +2444,8 @@ class GraphRAGRetriever:
             self.logger.error(f"Error initializing enhanced components: {e}")
     
     async def setup_enhanced_features(self, documents: Dict[str, Document], 
-                                    knowledge_graph: nx.Graph):
+                                    knowledge_graph: nx.Graph,
+                                    cached_community_summaries: Dict = None):
         """Set up enhanced features that require document data."""
         try:
             # Setup hybrid search with documents
@@ -2400,8 +2453,14 @@ class GraphRAGRetriever:
                 self.hybrid_search_manager.documents = documents
                 self.hybrid_search_manager._setup_hybrid_search()
             
-            # Generate community summaries if enabled
+            # Load cached community summaries if available
+            if cached_community_summaries:
+                self.community_summaries = cached_community_summaries
+                self.logger.info(f"Loaded {len(cached_community_summaries)} community summaries from cache")
+            
+            # Generate community summaries if enabled and not cached
             if self.community_manager and not self.community_summaries:
+                self.logger.info("No cached community summaries found, generating new ones...")
                 # Get communities from clustering
                 if self.clustering_manager:
                     communities = self.clustering_manager.leiden_clustering(knowledge_graph)
@@ -2426,15 +2485,40 @@ class GraphRAGRetriever:
                 self.multi_granular_manager.full_graph = knowledge_graph
                 self.multi_granular_manager.build_skeleton_graph(knowledge_graph, documents)
                 self.multi_granular_manager.build_keyword_bipartite(documents)
+            
+            # Setup SOTA Graph RAG features
+            try:
+                from enhanced_graphrag import SOTAGraphRAGOrchestrator
+                self.sota_orchestrator = SOTAGraphRAGOrchestrator(self.config)
+                
+                # Process all SOTA phases if any are enabled
+                summary = self.sota_orchestrator.get_processing_summary()
+                enabled_phases = sum(summary.values())
+                
+                if enabled_phases > 0:
+                    self.logger.info(f"🚀 Processing {enabled_phases}/5 SOTA Graph RAG phases...")
+                    knowledge_graph = await self.sota_orchestrator.process_all_phases(documents, knowledge_graph)
+                    self.logger.info("✅ SOTA Graph RAG processing complete")
+                else:
+                    self.logger.info("⚠️ No SOTA Graph RAG phases enabled")
+                    
+            except ImportError:
+                self.logger.info("SOTA Graph RAG features not available")
+            except Exception as e:
+                self.logger.error(f"Error in SOTA Graph RAG processing: {e}")
                 
         except Exception as e:
             self.logger.error(f"Error setting up enhanced features: {e}")
-        
+    
+    def get_community_summaries(self) -> Dict:
+        """Get community summaries for caching."""
+        return self.community_summaries if hasattr(self, 'community_summaries') else {}
+    
     async def retrieve_context(self, 
-                              query: str,
-                              documents: Dict[str, Document],
-                              knowledge_graph: nx.Graph,
-                              embedding_manager: EmbeddingManager) -> List[Document]:
+                        query: str,
+                        documents: Dict[str, Document],
+                        knowledge_graph: nx.Graph,
+                        embedding_manager: EmbeddingManager) -> List[Document]:
         """
         Enhanced retrieve relevant documents using multiple Graph RAG strategies.
         
@@ -2487,7 +2571,7 @@ class GraphRAGRetriever:
         if not semantic_results:
             self.logger.warning("No semantic search results found")
             return []
-        
+            
         # Step 2: Apply hybrid search if enabled
         from enhanced_graphrag import SearchResult
         
@@ -2520,10 +2604,19 @@ class GraphRAGRetriever:
                 for neighbor in neighbors[:self.config.top_k_graph]:
                     expanded_doc_ids.add(neighbor)
                     
-                    if self.config.max_graph_hops >= 2:
-                        second_hop = list(knowledge_graph.neighbors(neighbor))
-                        for second_neighbor in second_hop[:2]:
-                            expanded_doc_ids.add(second_neighbor)
+                    # Enhanced multi-hop graph traversal
+                    current_nodes = [neighbor]
+                    for hop in range(2, self.config.max_graph_hops + 1):
+                        next_nodes = []
+                        for node in current_nodes:
+                            if node in knowledge_graph:
+                                hop_neighbors = list(knowledge_graph.neighbors(node))
+                                for hop_neighbor in hop_neighbors[:3]:  # Limit breadth per hop
+                                    expanded_doc_ids.add(hop_neighbor)
+                                    next_nodes.append(hop_neighbor)
+                        current_nodes = next_nodes[:5]  # Limit nodes for next hop
+                        if not current_nodes:  # No more nodes to explore
+                            break
         
         # Step 4: Multi-granular search enhancement
         if self.multi_granular_manager:
@@ -2667,10 +2760,20 @@ class GraphRAGRetriever:
                     neighbors = list(knowledge_graph.neighbors(doc_id))
                     for neighbor in neighbors[:self.config.top_k_graph]:
                         expanded_doc_ids.add(neighbor)
-                        if self.config.max_graph_hops >= 2:
-                            second_hop = list(knowledge_graph.neighbors(neighbor))
-                            for second_neighbor in second_hop[:2]:
-                                expanded_doc_ids.add(second_neighbor)
+                        
+                        # Enhanced multi-hop traversal in fallback too
+                        current_nodes = [neighbor]
+                        for hop in range(2, self.config.max_graph_hops + 1):
+                            next_nodes = []
+                            for node in current_nodes:
+                                if node in knowledge_graph:
+                                    hop_neighbors = list(knowledge_graph.neighbors(node))
+                                    for hop_neighbor in hop_neighbors[:2]:  # Smaller breadth in fallback
+                                        expanded_doc_ids.add(hop_neighbor)
+                                        next_nodes.append(hop_neighbor)
+                            current_nodes = next_nodes[:3]  # Limit nodes for next hop
+                            if not current_nodes:
+                                break
             
             context_documents = []
             for doc_id in expanded_doc_ids:
@@ -2774,7 +2877,7 @@ Remember: You're helping the user explore their own knowledge - be encouraging a
             self.logger.info("Initializing chat bot...")
             
             if not self.system.documents:
-                raise ValueError("No documents loaded. Please run vault scanning first.")
+                raise ValueError("No documents loaded. Please run scan_and_parse_vault() first.")
             
             # Generate embeddings for all documents
             self.embedding_manager.generate_embeddings(self.system.documents)

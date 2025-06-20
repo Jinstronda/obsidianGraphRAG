@@ -30,6 +30,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import argparse
+import asyncio
 
 # Flask imports
 try:
@@ -74,10 +75,17 @@ class WebChatServer:
         self.chat_bot = ObsidianChatBot(graph_rag_system)
         self.chat_bot.initialize()
         
+        # Chat settings
+        self.current_model = self.config.llm_model
+        self.custom_prompt = self.config.custom_system_prompt if hasattr(self.config, 'custom_system_prompt') else None
+        
         # Setup routes
         self._setup_routes()
         
         print("🌐 Web chat server initialized successfully")
+        print(f"🤖 AI Model: {self.current_model}")
+        if self.custom_prompt:
+            print(f"📝 Custom Prompt: {self.custom_prompt[:100]}..." if len(self.custom_prompt) > 100 else f"📝 Custom Prompt: {self.custom_prompt}")
     
     def _setup_routes(self):
         """Setup Flask routes for the web interface."""
@@ -109,20 +117,40 @@ class WebChatServer:
                 self.chat_history.append(user_msg)
                 
                 # Get AI response
-                response = self.chat_bot.ask_question(message)
+                if self.custom_prompt:
+                    # Temporarily set custom prompt for this request
+                    original_prompt = getattr(self.chat_bot.retriever.config, 'custom_system_prompt', None)
+                    self.chat_bot.retriever.config.custom_system_prompt = self.custom_prompt
                 
-                # Add AI response to history
+                # Set current model
+                original_model = self.chat_bot.retriever.config.llm_model
+                self.chat_bot.retriever.config.llm_model = self.current_model
+                    
+                response = asyncio.run(self.chat_bot.ask_question(message))
+                
+                # Restore original settings
+                self.chat_bot.retriever.config.llm_model = original_model
+                
+                if self.custom_prompt:
+                    # Restore original prompt
+                    if original_prompt:
+                        self.chat_bot.retriever.config.custom_system_prompt = original_prompt
+                    else:
+                        delattr(self.chat_bot.retriever.config, 'custom_system_prompt')
+                
+                # Add AI response to history with restored source extraction
+                sources = asyncio.run(self._extract_sources(message))
                 ai_msg = {
                     'type': 'assistant',
                     'content': response,
                     'timestamp': datetime.now().isoformat(),
-                    'sources': self._extract_sources(message)
+                    'sources': sources
                 }
                 self.chat_history.append(ai_msg)
                 
                 return jsonify({
                     'response': response,
-                    'sources': ai_msg['sources'],
+                    'sources': sources,
                     'timestamp': ai_msg['timestamp']
                 })
                 
@@ -149,10 +177,44 @@ class WebChatServer:
                 'vault_path': self.config.vault_path,
                 'document_count': len(self.graph_rag.documents),
                 'graph_edges': self.graph_rag.knowledge_graph.number_of_edges(),
-                'has_openai': bool(self.config.openai_api_key)
+                'has_openai': bool(self.config.openai_api_key),
+                'model': self.current_model,
+                'custom_prompt': self.custom_prompt
             })
+        
+        @self.app.route('/api/model', methods=['GET', 'POST'])
+        def model_settings():
+            """Get or update model settings."""
+            if request.method == 'GET':
+                return jsonify({
+                    'model': self.current_model,
+                    'custom_prompt': self.custom_prompt,
+                    'available_models': [
+                        'gpt-4o', 'gpt-4o-mini', 'gpt-4', 'gpt-4-turbo',
+                        'gpt-3.5-turbo', 'gpt-3.5-turbo-16k'
+                    ]
+                })
+            
+            # POST - Update settings
+            try:
+                data = request.json
+                if 'model' in data:
+                    self.current_model = data['model']
+                    self.config.llm_model = data['model']
+                
+                if 'custom_prompt' in data:
+                    self.custom_prompt = data['custom_prompt']
+                    self.config.custom_system_prompt = data['custom_prompt']
+                
+                return jsonify({
+                    'status': 'updated',
+                    'model': self.current_model,
+                    'custom_prompt': self.custom_prompt
+                })
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
     
-    def _extract_sources(self, query: str) -> List[Dict[str, str]]:
+    async def _extract_sources(self, query: str) -> List[Dict[str, str]]:
         """Extract source documents for a query."""
         try:
             # Use the retriever to get context documents
@@ -161,7 +223,7 @@ class WebChatServer:
             retriever = GraphRAGRetriever(self.config)
             embedding_manager = EmbeddingManager(self.config, self.graph_rag.client, self.graph_rag)
             
-            context_docs = retriever.retrieve_context(
+            context_docs = await retriever.retrieve_context(
                 query,
                 self.graph_rag.documents,
                 self.graph_rag.knowledge_graph,
@@ -193,26 +255,85 @@ class WebChatServer:
             debug: Enable debug mode
             auto_open: Automatically open browser
         """
-        if auto_open:
-            # Open browser after a short delay
-            def open_browser():
-                import time
-                time.sleep(1.5)
-                webbrowser.open(f'http://{host}:{port}')
+        def open_browser_robust():
+            """Robust browser opening with multiple strategies."""
+            import time
+            import subprocess
+            import platform
             
-            threading.Thread(target=open_browser, daemon=True).start()
+            url = f'http://{host}:{port}'
+            time.sleep(2)  # Give server time to start
+            
+            print(f"🌐 Opening browser to: {url}")
+            
+            try:
+                # Strategy 1: Python webbrowser module
+                webbrowser.open(url)
+                print("✅ Browser opened successfully")
+                return
+            except Exception as e:
+                print(f"⚠️  Browser open method 1 failed: {e}")
+            
+            try:
+                # Strategy 2: OS-specific commands
+                system = platform.system()
+                if system == "Windows":
+                    subprocess.run(['start', url], shell=True, check=True)
+                elif system == "Darwin":  # macOS
+                    subprocess.run(['open', url], check=True)
+                elif system == "Linux":
+                    subprocess.run(['xdg-open', url], check=True)
+                print("✅ Browser opened via OS command")
+                return
+            except Exception as e:
+                print(f"⚠️  Browser open method 2 failed: {e}")
+            
+            # Strategy 3: Direct browser execution
+            try:
+                browsers = [
+                    'chrome', 'firefox', 'msedge', 'safari',
+                    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+                    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+                    'C:\\Program Files\\Mozilla Firefox\\firefox.exe',
+                    'C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe'
+                ]
+                
+                for browser in browsers:
+                    try:
+                        subprocess.run([browser, url], check=True)
+                        print(f"✅ Browser opened: {browser}")
+                        return
+                    except:
+                        continue
+                        
+            except Exception as e:
+                print(f"⚠️  All browser opening methods failed: {e}")
+            
+            print(f"🔗 Please manually open: {url}")
         
-        print(f"\n🌐 Starting web interface...")
+        if auto_open:
+            # Start browser opening in background thread
+            threading.Thread(target=open_browser_robust, daemon=True).start()
+        
+        print(f"\n🚀 Starting Obsidian AI Librarian Web Interface...")
         print(f"📍 URL: http://{host}:{port}")
         print(f"📚 Vault: {Path(self.config.vault_path).name}")
         print(f"📊 {len(self.graph_rag.documents):,} documents loaded")
-        print(f"\n🎉 Opening in your browser...")
-        print("\nPress Ctrl+C to stop the server")
+        print(f"🤖 AI Model: {self.current_model}")
+        if auto_open:
+            print(f"🌐 Opening in your browser...")
+        print(f"\n💡 Manual access: http://{host}:{port}")
+        print("⚙️  Press Ctrl+C to stop the server")
+        print("🎛️  Access settings in the web interface to customize prompts")
         
         try:
-            self.app.run(host=host, port=port, debug=debug, use_reloader=False)
+            # Force immediate server start
+            self.app.run(host=host, port=port, debug=debug, use_reloader=False, threaded=True)
         except KeyboardInterrupt:
             print("\n👋 Web server stopped")
+        except Exception as e:
+            print(f"❌ Server error: {e}")
+            print(f"🔗 Try manually opening: http://{host}:{port}")
 
 
 # HTML Template with inline CSS and JavaScript for self-contained deployment
@@ -319,6 +440,153 @@ HTML_TEMPLATE = '''
 
         .theme-toggle:hover {
             background: var(--border-color);
+        }
+
+        .settings-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .settings-button:hover {
+            background: var(--border-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .close {
+            color: var(--text-muted);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-muted);
+        }
+
+        .current-model {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
         }
 
         .status-indicator {
@@ -647,6 +915,9 @@ HTML_TEMPLATE = '''
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
                     <span id="theme-icon">🌙</span>
                 </button>
+                <button class="settings-button" onclick="openSettings()" title="AI Settings">
+                    ⚙️
+                </button>
                 <div class="status-indicator">
                     <div class="status-dot"></div>
                     <span>Ready</span>
@@ -681,6 +952,46 @@ HTML_TEMPLATE = '''
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🤖 AI Settings</h2>
+                <button class="close" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label class="form-label">AI Model <span id="currentModel" class="current-model">Loading...</span></label>
+                    <select id="modelSelect" class="form-select">
+                        <option value="gpt-4o">GPT-4o (Recommended)</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini (Fast & Economical)</option>
+                        <option value="gpt-4">GPT-4 (Most Capable)</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo (Balanced)</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Economic)</option>
+                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K (Long Context)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Custom System Prompt (Optional)</label>
+                    <textarea id="customPrompt" class="form-textarea" 
+                              placeholder="Enter a custom system prompt to modify the AI's behavior. Leave empty for default behavior.
+                              
+Example: 'You are a helpful research assistant specializing in academic papers. Always provide detailed citations and focus on evidence-based responses.'"></textarea>
+                    <small style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem; display: block;">
+                        💡 The system prompt defines how the AI behaves. Use this to make it more specialized for your use case.
+                    </small>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="resetSettings()">Reset to Default</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -874,7 +1185,82 @@ HTML_TEMPLATE = '''
         // Focus input on load
         window.addEventListener('load', () => {
             messageInput.focus();
+            loadSettings();
         });
+
+        // Settings Modal Functions
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+            loadSettings();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/model');
+                const data = await response.json();
+                
+                document.getElementById('currentModel').textContent = data.model;
+                document.getElementById('modelSelect').value = data.model;
+                document.getElementById('customPrompt').value = data.custom_prompt || '';
+                
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            const model = document.getElementById('modelSelect').value;
+            const customPrompt = document.getElementById('customPrompt').value.trim();
+            
+            try {
+                const response = await fetch('/api/model', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        custom_prompt: customPrompt
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('currentModel').textContent = data.model;
+                    closeSettings();
+                    
+                    // Show success message
+                    addMessage('assistant', `✅ Settings updated successfully!\n🤖 Model: ${data.model}\n📝 Custom prompt: ${data.custom_prompt ? 'Enabled' : 'Default'}`, new Date().toISOString());
+                } else {
+                    alert('Error saving settings: ' + data.error);
+                }
+                
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Network error saving settings');
+            }
+        }
+
+        function resetSettings() {
+            if (confirm('Reset to default settings? This will remove your custom prompt.')) {
+                document.getElementById('modelSelect').value = 'gpt-4o-mini';
+                document.getElementById('customPrompt').value = '';
+                saveSettings();
+            }
+        }
     </script>
 </body>
 </html>
@@ -883,6 +1269,14 @@ HTML_TEMPLATE = '''
 
 def main():
     """Main function to start the web chat interface."""
+    # Load environment variables FIRST before any config creation
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        print("✅ Environment variables loaded from .env")
+    except ImportError:
+        print("⚠️  dotenv not installed, trying without .env file")
+    
     parser = argparse.ArgumentParser(description="Obsidian Graph RAG Web Chat Interface")
     parser.add_argument('--host', type=str, default=None, help="Host to bind to (overrides .env)")
     parser.add_argument('--port', type=int, default=None, help="Port to bind to (overrides .env)")
@@ -893,6 +1287,45 @@ def main():
     args = parser.parse_args()
     
     try:
+        # Clean up any existing Python processes to prevent server conflicts
+        print("🧹 Cleaning up existing servers...")
+        import subprocess
+        import platform
+        
+        try:
+            if platform.system() == "Windows":
+                # More targeted cleanup - only kill processes on the specific port
+                import psutil
+                import os
+                current_pid = os.getpid()
+                
+                for proc in psutil.process_iter(['pid', 'name', 'connections']):
+                    try:
+                        # Skip the current process
+                        if proc.info['pid'] == current_pid:
+                            continue
+                            
+                        # Check if it's a Python process using our port
+                        if proc.info['name'] and 'python' in proc.info['name'].lower():
+                            for conn in proc.info['connections'] or []:
+                                if hasattr(conn, 'laddr') and conn.laddr and conn.laddr.port == config.web_port:
+                                    proc.terminate()
+                                    print(f"✅ Terminated process {proc.info['pid']} using port {config.web_port}")
+                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                        continue
+                        
+                print("✅ Cleaned up existing web chat processes on port")
+            else:
+                # For Unix-like systems, kill processes on the specific port
+                subprocess.run(['pkill', '-f', 'web_chat.py'], 
+                             capture_output=True, check=False)
+                print("✅ Cleaned up existing web chat processes")
+        except ImportError:
+            # If psutil not available, skip cleanup
+            print("⚠️  psutil not available, skipping process cleanup")
+        except Exception as cleanup_error:
+            print(f"⚠️  Cleanup warning: {cleanup_error}")
+        
         print("🚀 Initializing Obsidian Graph RAG Web Interface...")
         
         # Setup configuration (loads from .env)
