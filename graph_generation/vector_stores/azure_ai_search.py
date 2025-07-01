@@ -24,7 +24,7 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
-from graphrag.data_model.types import TextEmbedder
+from graph_generation.data_model.types import TextEmbedder
 from graph_generation.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
