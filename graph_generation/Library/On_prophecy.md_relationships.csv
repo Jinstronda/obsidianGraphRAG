@@ -1,0 +1,15 @@
+source,target,description,text_unit_ids,weight
+QUINTARA,KROHAARA,['A financial exchange took place between Quintara and Krohaara'],['0'],3.0
+KROHAARA,TIRUZIA,['Hostages were transferred from Tiruzia to Krohaara'],['0'],8.0
+KROHAARA,CASHION,['Hostages were transferred from Krohaara to Cashion'],['0'],4.0
+TIRUZIA,CASHION,['Hostages were transferred from Tiruzia to Cashion'],['0'],4.0
+TIRUZIA,SAMUEL NAMARA,['Samuel Namara was a hostage in Tiruzia'],['0'],10.0
+TIRUZIA,DURKE BATAGLANI,['Durke Bataglani was a hostage in Tiruzia'],['0'],10.0
+TIRUZIA,MEGGIE TAZBAH,['Meggie Tazbah was a hostage in Tiruzia'],['0'],6.0
+SAMUEL NAMARA,ALHAMIA PRISON,['Samuel Namara was held in Alhamia Prison'],['0'],7.0
+SAMUEL NAMARA,FIRUZABAD,['Samuel Namara was a hostage in Firuzabad'],['0'],5.0
+DURKE BATAGLANI,ALHAMIA PRISON,['Durke Bataglani was held in Alhamia Prison'],['0'],7.0
+DURKE BATAGLANI,FIRUZABAD,['Durke Bataglani was a hostage in Firuzabad'],['0'],1.0
+MEGGIE TAZBAH,ALHAMIA PRISON,['Meggie Tazbah was held in Alhamia Prison'],['0'],7.0
+MEGGIE TAZBAH,FIRUZABAD,['Meggie Tazbah was a hostage in Firuzabad'],['0'],5.0
+AURELIA,FIRUZI,['Aurelia negotiated the release of Firuzi hostages'],['0'],4.0

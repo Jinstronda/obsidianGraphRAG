@@ -1,0 +1,12 @@
+source,target,description,text_unit_ids,weight
+STONE OF THE PHILOSOPHERS,EDWARD KELLY,['Edward Kelly may have been involved in the pursuit or study of the Stone of the Philosophers'],['0'],7.0
+STONE OF THE PHILOSOPHERS,ARISTOTLE,"[""Aristotle's works mention the pursuit of the Stone of the Philosophers in alchemical practices""]",['0'],6.0
+STONE OF THE PHILOSOPHERS,AVICENNA,['Avicenna made contributions to alchemical knowledge related to the Stone of the Philosophers'],['0'],8.0
+EDWARD KELLY,ALCHEMY,['Edward Kelly may have been involved in alchemical pursuits or writings'],['0'],6.0
+MERCURY,GOLD,['Mercury is often associated with the transformation of base metals into gold in alchemical practices'],['0'],8.0
+MERCURY,SILVER,['Mercury is often used in alchemical processes involving silver'],['0'],1.0
+MERCURY,SULPHUR,['Sulphur is often combined with mercury in alchemical processes to create transformative substances'],['0'],1.0
+PLATO,PANDULPHUS,"[""Plato discusses the transformation of substances, which relates to Pandulphus's discussion on the generation of poison and wisdom in alchemy""]",['1'],7.0
+PANDULPHUS,RHASIS,"[""Pandulphus discusses the generation of poison and wisdom in alchemy, which relates to Rhasis's discussion on the purification and transformation of substances""]",['1'],8.0
+ROSINUS,CALID,"[""Rosinus discusses the importance of spirits and bodies in alchemical processes, which relates to Calid's discussion on the preparation and subtilization of substances""]",['1'],6.0
+ARISTOTLE,ASCANIUS,"[""Aristotle discusses the union of pure substances and the transformation of impure bodies, which relates to Ascanius's discussion on the interaction between copper and mercury in alchemical processes""]",['1'],1.0

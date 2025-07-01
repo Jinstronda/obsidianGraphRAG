@@ -1,0 +1,17 @@
+title,type,description,text_unit_ids,frequency
+EMERALD TABLE,EVENT,['The Emerald Table is a text that describes the process of transmutation and the generation of the Stone'],['0'],1
+HERMES,PERSON,['Hermes is a figure mentioned in the text who is associated with the teachings of the Emerald Table'],['0'],1
+GOD,PERSON,['God is mentioned as the creator of the four elements in the text'],['0'],1
+SUN,GEO,['The Sun is described as the father in the process of transmutation'],['0'],1
+MOON,GEO,['The Moon is described as the mother in the process of transmutation'],['0'],1
+WIND,GEO,['The Wind is described as carrying the Stone in its womb in the process of transmutation'],['0'],1
+EARTH,GEO,['The Earth is described as the nurse in the process of transmutation'],['0'],1
+MERCURY,GEO,['Mercury is mentioned as a substance that can be overcome in the process of transmutation'],['0'],1
+MATTER,EVENT,['The First Matter is described as the common substance from which all things arise in the text'],['0'],1
+FOUR ELEMENTS,EVENT,['The Four Elements are mentioned as being created by God in the text'],['0'],1
+SPIRIT,EVENT,['The Spirit is described as a key component in the process of transmutation in the text'],['0'],1
+BODY,EVENT,['The Body is mentioned as being transmuted in the process of transmutation in the text'],['0'],1
+LEAVEN,EVENT,['Leaven is described as a metaphor for the transmutation process in the text'],['0'],1
+BAKER,PERSON,['The Baker is mentioned as a comparison in the text to describe the transmutation process'],['0'],1
+SAGE,PERSON,['The Sage is mentioned as a figure who imparts wisdom in the text'],['0'],1
+STONE,,[''],['0'],1

@@ -1,0 +1,45 @@
+title,type,description,text_unit_ids,frequency
+SACRED-TEXTS,ORGANIZATION,['Sacred-Texts is a website that provides esoteric texts and resources for spiritual seekers'],['0'],1
+EMERALD TABLET OF HERMES,EVENT,"[""The Emerald Tablet of Hermes is a legendary alchemical text that contains the secrets of the philosopher's stone""]",['0'],1
+NEEDHAM,PERSON,['Needham is a scholar who has written about the history of the Emerald Tablet'],['0'],1
+HOLMYARD,PERSON,['Holmyard is a scholar who has written about the history of the Emerald Tablet'],['0'],1
+JOHANNES HISPALANSIS,PERSON,['Johannes Hispalensis translated the Kitab Sirr al-Asar into Latin'],['0'],1
+PHILIP OF TRIPOLI,PERSON,['Philip of Tripoli translated the Kitab Sirr al-Asar into Latin'],['0'],1
+PLATO OF TIVOLI,PERSON,['Plato of Tivoli may have translated the Emerald Tablet from Arabic'],['0'],1
+HUGH OF SANTALLA,PERSON,['Hugh of Santalla may have translated the Emerald Tablet from Arabic'],['0'],1
+RUSKA,PERSON,['Ruska found an early Arabic version of the Emerald Tablet'],['0'],1
+JABIR,PERSON,['Jabir is attributed with an Arabic version of the Emerald Tablet'],['0'],1
+BALINAS,PERSON,['Balinas is mentioned in an Arabic version of the Emerald Tablet\nBalinas is identified with Apollonius of Tyna in some texts\nBalinas is usually identified with Apollonius of Tyna'],['0'],1
+AL-MA'MUN,PERSON,"[""Al-Ma'mun was the Caliph during the time the Emerald Tablet was attributed to""]",['0'],1
+JOB OF ODESSA,PERSON,['Job of Odessa wrote the Syriac Book of Treasures'],['0'],1
+NEMESIUS OF EMESA,PERSON,['Nemesius of Emesa wrote Greek texts that may have similarities to the Emerald Tablet'],['0'],1
+SAMUEL NAMARA,PERSON,['Samuel Namara is a businessman who was held in Alhamia Prison'],['0'],1
+DURKE BATAGLANI,PERSON,['Durke Bataglani is a journalist who was held hostage'],['0'],1
+MEGGIE TAZBAH,PERSON,['Meggie Tazbah is an environmentalist who was held hostage'],['0'],1
+FIRUZABAD,GEO,['Firuzabad is a location where Aurelians were held hostage'],['0'],1
+AURELIA,GEO,['Aurelia is the country to which the Aurelians are returning'],['0'],1
+QUINTARA,GEO,['Quintara is a country that negotiated the hostage exchange'],['0'],1
+TIRUZIA,GEO,['Tiruzia is the capital of Firuzabad where the Aurelians were held'],['0'],1
+KROHAARA,GEO,['Krohaara is the capital city in Quintara'],['0'],1
+CASHION,GEO,['Cashion is the capital city in Aurelia'],['0'],1
+ALHAMIA PRISON,GEO,['Alhamia Prison is a prison in Tiruzia where Samuel Namara was held'],['0'],1
+KITAB SIRR AL-ASAR,ORGANIZATION,['The Kitab Sirr al-Asar is an Arabic text that may have been translated into Latin and included the Emerald Tablet'],['0'],1
+SERGIUS OF NABLUS,PERSON,['Sergius of Nablus is mentioned in a 12th-century recension of the Emerald Tablet'],['0'],1
+BURCKHARDT,PERSON,['Burckhardt is a philosopher who discusses the light of the Spirit and alchemical fixation'],['1'],1
+TRITHEMIUS,PERSON,"[""Trithemius talks about the Philosopher's Stone and the creative process""]",['1'],1
+BACSTROM,PERSON,['Bacstrom discusses the powers concealed in nature and alchemical processes'],['1'],1
+NEWTON,PERSON,"['Newton talks about Mercurius and the art of alchemy\nNewton, a renowned scientist, discusses Mercurius and the art of alchemy']",['1'],1
+BLAVATSKY,PERSON,"['Blavatsky, a theosophist, discusses the astral light and its role in alchemy\nBlavatsky discusses the astral light and its role in alchemy']",['1'],1
+SCHUMAKER,PERSON,"['Schumaker discusses the alchemical operation as a creative process\nSchumaker, an author, discusses the alchemical operation as a creative process']",['1'],1
+HORTULANUS,PERSON,"[""Hortulanus teaches about the composition of the Philosopher's Stone""]",['1'],1
+IBN UMAIL,PERSON,['Ibn Umail provides a commentary on the secret of everything and the life of everything'],['1'],1
+ALBERTUS MAGNUS,PERSON,"['Albertus Magnus, a medieval alchemist, discusses alchemical processes and minerals']",['1'],1
+ROGER BACON,PERSON,"['Roger Bacon, a Franciscan friar, wrote about alchemy and the secrets of nature']",['1'],1
+GEORGE RIPLEY,PERSON,"[""George Ripley, an English alchemist, wrote about the Philosopher's Stone and alchemical processes""]",['1'],1
+MICHAEL MAIER,PERSON,"['Michael Maier, a German alchemist, wrote about alchemical emblems and symbolism']",['1'],1
+HERMES TRISMEGISTUS,PERSON,"['Hermes Trismegistus, a legendary figure, is associated with alchemical wisdom and teachings']",['1'],1
+AZOTH,PERSON,"['Azoth, a symbolic term in alchemy, represents the universal magical agent']",['1'],1
+MERCURIUS,PERSON,"['Mercurius, a symbolic figure in alchemy, represents the transformative power of alchemical processes']",['1'],1
+CHIRAM,PERSON,"['Chiram, an alchemical symbol, is associated with hidden wisdom and knowledge']",['1'],1
+HERMES,PERSON,"['Hermes, an alchemical symbol, represents knowledge and wisdom']",['1'],1
+GOD,PERSON,['God is often referenced in alchemical texts as the ultimate source of creation and transformation'],['1'],1

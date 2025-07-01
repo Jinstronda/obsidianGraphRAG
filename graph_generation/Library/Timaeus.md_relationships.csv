@@ -1,0 +1,78 @@
+source,target,description,text_unit_ids,weight
+TIMAEUS,PLATO,['Timaeus is a character in the text written by Plato'],['0'],8.0
+TIMAEUS,SOCRATES,['Timaeus is the speaker in the text and interacts with Socrates'],['0'],7.0
+TIMAEUS,GOD,['God is referenced as the creator in the text explained by Timaeus'],['0'],9.0
+SOCRATES,CRITIAS,['Critias is a character in the text who interacts with Socrates'],['0'],6.0
+SOCRATES,HERMOCRATES,['Hermocrates is a character in the text who interacts with Socrates'],['0'],6.0
+CRITIAS,SOLON,['Solon is mentioned as a wise man whose tale is related by Critias'],['0'],7.0
+CRITIAS,AMYNANDER,['Amynander is mentioned as a character in the text related by Critias'],['0'],6.0
+ATHENS,ATLANTIS,['Athens and Atlantis are mentioned as locations in the text'],['0'],1.0
+GOD,WORLD,['The world is mentioned as the creation of the universe by God'],['0'],1.0
+EARTH,FIRE,['Earth and fire are mentioned as elements in the creation of the world\nFire and earth are mentioned as elements in the creation of the world'],['0'],14.0
+EARTH,WATER,['Water and earth are mentioned as elements in the creation of the world'],['0'],7.0
+WATER,AIR,['Air and water are mentioned as elements in the creation of the world\nWater and air are mentioned as elements in the creation of the world'],['0'],14.0
+NEITH,HEPHAESTUS,['Hephaestus and Neith are mentioned as deities in the text'],['0'],5.0
+CENTRAL INSTITUTION,MARTIN SMITH,"['Martin Smith is the Chair of the Central Institution and will answer questions at a press conference', 'Martin Smith is the Chair of the Central Institution and will answer questions at a press conference', 'Martin Smith is the Chair of the Central Institution and will answer questions at a press conference']","['1', '2', '3']",27.0
+TECHGLOBAL,VISION HOLDINGS,"['Vision Holdings formerly owned TechGlobal', 'Vision Holdings formerly owned TechGlobal from 2014 until present', 'Vision Holdings formerly owned TechGlobal from 2014 until present']","['1', '2', '3']",11.0
+FIRUZABAD,AURELIA,"['Firuzabad negotiated a hostage exchange with Aurelia', 'Firuzabad negotiated a hostage exchange with Aurelia', 'Firuzabad negotiated a hostage exchange with Aurelia']","['1', '2', '3']",6.0
+FIRUZABAD,QUINTARA,"['Quintara brokered the hostage exchange between Firuzabad and Aurelia', 'Quintara brokered the hostage exchange between Firuzabad and Aurelia', 'Quintara brokered the hostage exchange between Firuzabad and Aurelia']","['1', '2', '3']",6.0
+FIRUZABAD,SAMUEL NAMARA,"['Samuel Namara was a hostage in Firuzabad', 'Samuel Namara was a hostage in Firuzabad', 'Samuel Namara was a hostage in Firuzabad']","['1', '2', '3']",6.0
+FIRUZABAD,MEGGIE TAZBAH,"['Meggie Tazbah was a hostage in Firuzabad', 'Meggie Tazbah was a hostage in Firuzabad', 'Meggie Tazbah was a hostage in Firuzabad']","['1', '2', '3']",6.0
+FIRUZABAD,DURKE BATAGLANI,"['Durke Bataglani was a hostage in Firuzabad', 'Durke Bataglani was a hostage in Firuzabad', 'Durke Bataglani was a hostage in Firuzabad']","['1', '2', '3']",3.0
+AURELIA,QUINTARA,"['Quintara brokered the hostage exchange between Firuzabad and Aurelia', 'Quintara brokered the hostage exchange between Firuzabad and Aurelia', 'Quintara brokered the hostage exchange between Firuzabad and Aurelia']","['1', '2', '3']",6.0
+QUINTARA,FIRUZI,['Quintara negotiated the transfer of Firuzi funds in the hostage exchange'],['1'],3.0
+TIRUZIA,KROHAARA,"['Hostages boarded a chartered flight from Tiruzia to Krohaara', 'Chartered flight from Tiruzia to Krohaara']","['1', '2']",8.0
+TIRUZIA,SAMUEL NAMARA,"[""Samuel Namara was held in Tiruzia's Alhamia Prison"", ""Samuel Namara was held in Tiruzia's Alhamia Prison""]","['1', '3']",6.0
+TIRUZIA,DURKE BATAGLANI,['Durke Bataglani was held hostage in Tiruzia'],['1'],4.0
+TIRUZIA,MEGGIE TAZBAH,['Meggie Tazbah was held hostage in Tiruzia'],['1'],1.0
+KROHAARA,CASHION,['Hostages are on their way from Krohaara to Cashion'],['1'],3.0
+SAMUEL NAMARA,ALHAMIA PRISON,"['Samuel Namara was a prisoner at Alhamia prison', 'Samuel Namara was a prisoner at Alhamia prison', 'Samuel Namara was a prisoner at Alhamia prison']","['1', '2', '3']",24.0
+SAMUEL NAMARA,MEGGIE TAZBAH,"['Samuel Namara and Meggie Tazbah were exchanged in the same hostage release', 'Samuel Namara and Meggie Tazbah were exchanged in the same hostage release', 'Samuel Namara and Meggie Tazbah were exchanged in the same hostage release']","['1', '2', '3']",6.0
+SAMUEL NAMARA,DURKE BATAGLANI,"['Samuel Namara and Durke Bataglani were exchanged in the same hostage release', 'Samuel Namara and Durke Bataglani were exchanged in the same hostage release', 'Samuel Namara and Durke Bataglani were exchanged in the same hostage release']","['1', '2', '3']",6.0
+DURKE BATAGLANI,MEGGIE TAZBAH,"['Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release', 'Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release', 'Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release']","['1', '2', '3']",6.0
+FIRUZABAD,TIRUZIA,['Hostages boarded a chartered flight from Tiruzia'],['2'],3.0
+AURELIA,OFFICIALS,['Senior Aurelian officials welcomed the hostages'],['2'],7.0
+QUINTARA,KROHAARA,"['Funds transferred to financial institutions in Krohaara', 'Funds for the hostage exchange were transferred to financial institutions in Krohaara']","['2', '3']",10.0
+CASHION,OFFICIALS,['Senior Aurelian officials are in Cashion'],['2'],1.0
+FIRUZABAD,FIRUZI,['The hostages held in Firuzabad were of Firuzi nationality'],['3'],2.0
+MARROW,GENERATION,"[""Marrow is a key part of the body's generation process, facilitating the flow of streams and irrigation""]",['4'],8.0
+HEAD,SINCE,"['The head requires sinews and skin to form a bond with the body, as it is not encircled by sinews']",['4'],6.0
+FIRE,PENETRATES,"[""Fire has the smallest particles and penetrates through various elements, affecting the body's structure""]",['4'],7.0
+BELLY,HOLDS,"['The belly holds and processes food and drink, but cannot contain air and fire due to their smaller particles']",['4'],5.0
+INSPIRATION,NAMED,['The process of inspiration and expiration is named as a way to maintain balance and nourishment'],['4'],8.0
+RESPIRATION,AIR,['Air plays a crucial role in respiration and the distribution of nutrients throughout the body'],['4'],8.0
+CUPPING-GLASSES,USED,['Medical cupping-glasses are used in a similar principle to respiration to treat various ailments'],['4'],6.0
+SOUNDS,PRODUCED,"['Sounds, both swift and slow, high and low, are produced by various motions and vibrations in the body']",['4'],7.0
+WATER-FLOW,REGULATED,['The flowing of water in the body is regulated by various processes to maintain balance and nourishment'],['4'],8.0
+THUNDERBOLT,EXPLAINED,['The fall of the thunderbolt is explained by the interaction of various elements and their motions'],['4'],7.0
+ATTRACTION,EXPLAINED,['Various phenomena like the attraction of amber and stones are explained by the combination of conditions and motions'],['4'],8.0
+DISEASES,ARISE,"[""Diseases arise from imbalances and irregularities in the body's elements and their interactions""]",['4'],9.0
+BLOOD,NOURISHES,['Blood is a vital liquid that nourishes the body and fills empty spaces'],['4'],7.0
+FLESH,COMPOSED,['Flesh is composed of various elements and plays a role in nourishing the body'],['4'],6.0
+BONE,SUPPORTS,"['Bones provide structure and support to the body, and are nourished by various substances']",['4'],8.0
+MUSCLES,ESSENTIAL,['Muscles are essential for movement and are nourished by various substances'],['4'],7.0
+MIND,AFFECTED,"[""The mind is affected by the body's condition and can experience diseases due to imbalances""]",['4'],6.0
+SOUL,INFLUENCED,"[""The soul is influenced by the body's health and can experience diseases and disorders""]",['4'],7.0
+WOMEN,CREATED,"['Women were created from men who led unrighteous lives, transforming into a different nature']",['4'],8.0
+BIRDS,CREATED,['Birds were created from men who were light-minded and focused on sight as a means of understanding the heavens'],['4'],7.0
+ANIMALS,CREATED,['Wild pedestrian animals were created from those who lacked philosophy and did not consider the nature of the heavens'],['4'],8.0
+WATER-INHABITANTS,CREATED,"['Water inhabitants were created from those who were entirely senseless and impure, given the sea as their element']",['4'],1.0
+ARISE,INFLAMMATION,"['Inflammation can arise from burnings and inflamings in the body, causing swelling and discomfort']",['4'],7.0
+PHLEGM,MIXED,['Phlegm can cause diseases when imbalanced or mixed with other substances'],['4'],7.0
+PHYSICIAN,TREATS,['Physicians play a role in treating diseases and disorders in the body'],['4'],6.0
+MOTION,CONTRIBUTE,['Various motions within the body contribute to the overall health and functioning of the body'],['4'],8.0
+HEAT,AFFECTS,"[""Heat naturally moves outward to its own place and kindred element, affecting the body's temperature""]",['4'],7.0
+FEVER,CAUSED,"['Fever can be caused by excess of fire, air, water, or earth in the body, leading to various symptoms']",['4'],8.0
+RHEUMS,OBSTRUCT,['Rheums can obstruct the lung and cause various respiratory issues in the body'],['4'],6.0
+LEPROUS ERUPTIONS,CAUSED,['Leprous eruptions can be caused by the mingling of phlegm with other substances in the body'],['4'],7.0
+CATARRH,DISEASE,['Catarrh is a disease caused by an excess of acid and salt phlegm in the body'],['4'],8.0
+MUSICAL,CONTRIBUTE,['Music and philosophy can contribute to the overall health and balance of the body and soul'],['4'],7.0
+GOD,CREATOR,['God is mentioned as the creator and designer of the human body and soul'],['4'],1.0
+TRANSFORMERS,FISHES,['The transformers created fishes as aquatic animals'],['5'],7.0
+TRANSFORMERS,OYSTERS,['The transformers created oysters as aquatic animals'],['5'],7.0
+TRANSFORMERS,WATER,['The transformers gave water as the element for the inhabitants of the water'],['5'],8.0
+TRANSFORMERS,EARTH,['The transformers created beings to inhabit the Earth'],['5'],6.0
+TRANSFORMERS,UNIVERSE,['The universe is where the transformers created animals'],['5'],7.0
+THEAETETUS,PLOTINUS,['Theaetetus and Plotinus are mentioned in the text'],['5'],1.0
+VISIBLE ANIMAL,UNIVERSE,['The visible animal exists within the universe filled with animals'],['5'],6.0
+SENSIBLE GOD,INTELLECTUAL,['The sensible God is the image of the intellectual being'],['5'],1.0

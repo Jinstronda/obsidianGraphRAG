@@ -1,0 +1,117 @@
+title,type,description,text_unit_ids,frequency
+TIMAEUS,PERSON,['Timaeus is a philosopher and astronomer who is the speaker in the text'],['0'],1
+PLATO,PERSON,['Plato is the author of the text'],['0'],1
+BENJAMIN JOWETT,PERSON,['Benjamin Jowett is the translator of the text'],['0'],1
+NEW YORK,GEO,['New York is a city where the text was published'],['0'],1
+C. SCRIBNER'S SONS,ORGANIZATION,"[""C. Scribner's Sons is the publisher of the text""]",['0'],1
+SOCRATES,PERSON,['Socrates is a character in the text'],['0'],1
+CRITIAS,PERSON,['Critias is a character in the text'],['0'],1
+HERMOCRATES,PERSON,['Hermocrates is a character in the text'],['0'],1
+ATHENS,GEO,['Athens is mentioned as the ancient city in the text'],['0'],1
+ATLANTIS,GEO,['Atlantis is mentioned as a mythical island in the text'],['0'],1
+GOD,PERSON,"['God is referenced as the creator in the text', 'God is mentioned as the creator and designer of the human body and soul']","['0', '4']",2
+EARTH,GEO,"['Earth is mentioned as one of the elements in the creation of the world', 'Earth is the habitat for beings created by the transformers']","['0', '5']",2
+FIRE,GEO,['Fire is mentioned as one of the elements in the creation of the world'],['0'],1
+WATER,GEO,"['Water is mentioned as one of the elements in the creation of the world', 'Water is the element given to the inhabitants of the water by the transformers']","['0', '5']",2
+AIR,GEO,['Air is mentioned as one of the elements in the creation of the world'],['0'],1
+NEITH,PERSON,['Neith is mentioned as a deity in the text'],['0'],1
+SOLON,PERSON,['Solon is mentioned as a wise man in the text'],['0'],1
+AMYNANDER,PERSON,['Amynander is mentioned as a character in the text'],['0'],1
+FIRER,GEO,['Fire is mentioned as an element in the creation of the world'],['0'],1
+WORLD,GEO,['The world is mentioned as the creation of the universe'],['0'],1
+HEPHAESTUS,,[''],['0'],1
+VERDANTIS,ORGANIZATION,"['Verdantis is a country or region where the Central Institution operates, setting interest rates', 'Verdantis is a central institution that sets interest rates on specific days', 'Verdantis is a country or region with a Central Institution that sets interest rates']","['1', '2', '3']",3
+CENTRAL INSTITUTION,ORGANIZATION,"['The Central Institution is an organization responsible for setting interest rates in Verdantis', 'The Central Institution is the Federal Reserve of Verdantis, which is setting interest rates on Monday and Thursday', 'The Central Institution is the Federal Reserve of Verdantis, which is setting interest rates on Monday and Thursday']","['1', '2', '3']",3
+MARTIN SMITH,PERSON,"['Martin Smith is the Chair of the Central Institution', 'Martin Smith is the chair of the Central Institution', 'Martin Smith is the chair of the Central Institution']","['1', '2', '3']",3
+MARKET STRATEGY COMMITTEE,ORGANIZATION,"['The Market Strategy Committee is a subcommittee of the Central Institution responsible for key decisions on interest rates and money supply', ""The Central Institution committee makes key decisions about interest rates and the growth of Verdantis's money supply"", ""The Central Institution committee makes key decisions about interest rates and the growth of Verdantis's money supply""]","['1', '2', '3']",3
+TECHGLOBAL,ORGANIZATION,"['TechGlobal is a stock listed on the Global Exchange that powers premium smartphones', 'TechGlobal is a stock now listed on the Global Exchange which powers 85% of premium smartphones', 'TechGlobal is a stock now listed on the Global Exchange which powers 85% of premium smartphones']","['1', '2', '3']",3
+VISION HOLDINGS,ORGANIZATION,"['Vision Holdings is a firm that previously owned TechGlobal', 'Vision Holdings is a firm that previously owned TechGlobal', 'Vision Holdings is a firm that previously owned TechGlobal']","['1', '2', '3']",3
+FIRUZABAD,GEO,"['Firuzabad is a location where Aurelians were held as hostages', 'Firuzabad held Aurelians as hostages', 'Firuzabad held Aurelians as hostages']","['1', '2', '3']",3
+AURELIA,GEO,"['Aurelia is a country seeking to release hostages', 'Country seeking to release hostages', 'Country seeking to release hostages']","['1', '2', '3']",3
+QUINTARA,GEO,"['Quintara is a country that negotiated a hostage exchange with Firuzabad and Aurelia', 'Country that negotiated a swap of money in exchange for hostages']","['1', '2']",2
+TIRUZIA,GEO,"['Tiruzia is the capital of Firuzabad where hostages were held', 'Capital of Firuzabad where the Aurelians were being held', 'Capital of Firuzabad where the Aurelians were being held']","['1', '2', '3']",3
+KROHAARA,GEO,"['Krohaara is the capital city in Quintara where funds were transferred', 'Capital city in Quintara', 'Capital city in Quintara\nCapital city in Quintara where the hostage exchange funds were transferred']","['1', '2', '3']",3
+CASHION,GEO,"['Cashion is the capital city in Aurelia where hostages are being welcomed', 'Capital city in Aurelia', 'Capital city in Aurelia']","['1', '2', '3']",3
+SAMUEL NAMARA,PERSON,"[""Samuel Namara is an Aurelian businessman held in Tiruzia's Alhamia Prison\nSamuel Namara is a 39-year-old businessman held in Tiruzia's Alhamia Prison"", ""Aurelian who spent time in Tiruzia's Alhamia Prison"", ""Aurelian who spent time in Tiruzia's Alhamia Prison\nAurelian businessman held in Tiruzia's Alhamia Prison""]","['1', '2', '3']",3
+ALHAMIA PRISON,GEO,"['Alhamia Prison is a prison in Tiruzia where hostages were held', 'Prison in Tiruzia', 'Prison in Tiruzia']","['1', '2', '3']",3
+DURKE BATAGLANI,PERSON,"['Durke Bataglani is a 59-year-old journalist held hostage\nDurke Bataglani is an Aurelian journalist held hostage', 'Aurelian journalist who was held hostage', 'Aurelian journalist held hostage in Firuzabad\nAurelian journalist who was held hostage']","['1', '2', '3']",3
+MEGGIE TAZBAH,PERSON,"['Meggie Tazbah is a 53-year-old environmentalist and Bratinas national held hostage\nMeggie Tazbah is an environmentalist and Bratinas national held hostage', 'Bratinas national and environmentalist who was held hostage', 'Bratinas national and environmentalist who was held hostage\nEnvironmental activist with Bratinas nationality held hostage in Firuzabad']","['1', '2', '3']",3
+AURELIAN OFFICIALS,PERSON,['Senior Aurelian officials welcomed the hostages'],['1'],1
+FIRUZI,,"['', '']","['1', '3']",2
+HOSTAGES,EVENT,['Aurelians held as hostages in Firuzabad'],['2'],1
+SWAP,EVENT,['Negotiated exchange of hostages for money'],['2'],1
+FINANCIAL INSTITUTIONS,ORGANIZATION,['Institutions in Krohaara where funds were transferred'],['2'],1
+CHARACTER FLIGHT,EVENT,['Chartered flight from Tiruzia to Krohaara'],['2'],1
+OFFICIALS,PERSON,['Senior Aurelian officials welcoming the hostages'],['2'],1
+CAPITAL,GEO,['Capital city of Aurelia where hostages are headed'],['2'],1
+QUINTARA,ORGANIZATION,['Country that orchestrated the hostage exchange\nCountry that negotiated a swap of money in exchange for hostages'],['3'],1
+MARROW,ORGANIZATION,"[""Marrow is a vital part of the body's generation process, located along the backbone to facilitate the flow of streams and irrigation""]",['4'],1
+GENERATION,EVENT,['The process of generation involves the distribution of moisture and nutrients throughout the body'],['4'],1
+VEINS,ORGANIZATION,['Veins play a crucial role in distributing sensations and nutrients throughout the body'],['4'],1
+HEAD,ORGANIZATION,"[""The head is a key part of the body's structure, requiring sinews and skin to form a bond with the body""]",['4'],1
+FIRE,ORGANIZATION,"[""Fire has the smallest particles and penetrates through various elements, affecting the body's structure""]",['4'],1
+BELLY,ORGANIZATION,"['The belly holds and processes food and drink, but cannot contain air and fire due to their smaller particles']",['4'],1
+WATER-COURSES,ORGANIZATION,['Water-courses in the body are crucial for distributing moisture and nutrients'],['4'],1
+INSPIRATION,EVENT,['The process of inspiration involves the movement of air and fire within the body to nourish and cool it'],['4'],1
+EXPIRATION,EVENT,['Expiration is the process of releasing air and fire from the body to maintain balance and nourishment'],['4'],1
+RESPIRATION,EVENT,"['Respiration is the overall process of breathing, involving the intake and release of air and fire within the body']",['4'],1
+CUPPING-GLASSES,ORGANIZATION,['Medical cupping-glasses are used in a similar principle to respiration to treat various ailments'],['4'],1
+SOUNDS,EVENT,"['Sounds, both swift and slow, high and low, are produced by various motions and vibrations in the body']",['4'],1
+WATER-FLOW,EVENT,['The flowing of water in the body is regulated by various processes to maintain balance and nourishment'],['4'],1
+THUNDERBOLT,EVENT,['The fall of the thunderbolt is explained by the interaction of various elements and their motions'],['4'],1
+ATTRACTION,EVENT,['Various phenomena like the attraction of amber and stones are explained by the combination of conditions and motions'],['4'],1
+DISEASES,EVENT,"[""Diseases arise from imbalances and irregularities in the body's elements and their interactions""]",['4'],1
+BLOOD,ORGANIZATION,['Blood is a vital liquid that nourishes the body and fills empty spaces'],['4'],1
+FLESH,ORGANIZATION,['Flesh is composed of various elements and plays a role in nourishing the body'],['4'],1
+BONE,ORGANIZATION,"['Bones provide structure and support to the body, and are nourished by various substances']",['4'],1
+MUSCLES,ORGANIZATION,['Muscles are essential for movement and are nourished by various substances'],['4'],1
+MIND,PERSON,"[""The mind is affected by the body's condition and can experience diseases due to imbalances""]",['4'],1
+SOUL,PERSON,"[""The soul is influenced by the body's health and can experience diseases and disorders""]",['4'],1
+WOMEN,PERSON,"['Women were created from men who led unrighteous lives, transforming into a different nature']",['4'],1
+BIRDS,EVENT,['Birds were created from men who were light-minded and focused on sight as a means of understanding the heavens'],['4'],1
+ANIMALS,EVENT,['Wild pedestrian animals were created from those who lacked philosophy and did not consider the nature of the heavens'],['4'],1
+WATER-INHABITANTS,EVENT,"['Water inhabitants were created from those who were entirely senseless and impure, given the sea as their element']",['4'],1
+SINCE,,[''],['4'],1
+PENETRATES,,[''],['4'],1
+HOLDS,,[''],['4'],1
+NAMED,,[''],['4'],1
+USED,,[''],['4'],1
+PRODUCED,,[''],['4'],1
+REGULATED,,[''],['4'],1
+EXPLAINED,,[''],['4'],1
+ARISE,,[''],['4'],1
+NOURISHES,,[''],['4'],1
+COMPOSED,,[''],['4'],1
+SUPPORTS,,[''],['4'],1
+ESSENTIAL,,[''],['4'],1
+AFFECTED,,[''],['4'],1
+INFLUENCED,,[''],['4'],1
+CREATED,,[''],['4'],1
+PHLEGM,ORGANIZATION,['Phlegm is a bodily fluid that can cause diseases when imbalanced or mixed with other substances'],['4'],1
+PHYSICIAN,PERSON,['Physicians play a role in treating diseases and disorders in the body'],['4'],1
+MOTION,EVENT,['Various motions within the body contribute to the overall health and functioning of the body'],['4'],1
+HEAT,ORGANIZATION,"[""Heat naturally moves outward to its own place and kindred element, affecting the body's temperature""]",['4'],1
+FEVER,EVENT,"['Fever can be caused by excess of fire, air, water, or earth in the body, leading to various symptoms']",['4'],1
+INFLAMMATION,EVENT,"['Inflammation can arise from burnings and inflamings in the body, causing swelling and discomfort']",['4'],1
+RHEUMS,ORGANIZATION,['Rheums can obstruct the lung and cause various respiratory issues in the body'],['4'],1
+LEPROUS ERUPTIONS,EVENT,['Leprous eruptions can be caused by the mingling of phlegm with other substances in the body'],['4'],1
+CATARRH,EVENT,['Catarrh is a disease caused by an excess of acid and salt phlegm in the body'],['4'],1
+MUSICAL,EVENT,['Music and philosophy can contribute to the overall health and balance of the body and soul'],['4'],1
+AIR,,[''],['4'],1
+MIXED,,[''],['4'],1
+TREATS,,[''],['4'],1
+CONTRIBUTE,,[''],['4'],1
+AFFECTS,,[''],['4'],1
+CAUSED,,[''],['4'],1
+OBSTRUCT,,[''],['4'],1
+DISEASE,,[''],['4'],1
+CREATOR,,[''],['4'],1
+TRANSFORMERS,ORGANIZATION,['The transformers are a group responsible for creating different classes of beings on Earth'],['5'],1
+FISHES,ORGANIZATION,['Fishes are aquatic animals created by the transformers for the water habitat'],['5'],1
+OYSTERS,ORGANIZATION,['Oysters are aquatic animals created by the transformers for the water habitat'],['5'],1
+THEAETETUS,PERSON,['Theaetetus is a character mentioned in the text'],['5'],1
+PLOTINUS,PERSON,['Plotinus is a philosopher mentioned in the text'],['5'],1
+VISIBLE ANIMAL,ORGANIZATION,['The visible animal is a concept representing the world filled with mortal and immortal animals'],['5'],1
+SENSIBLE GOD,ORGANIZATION,"['The sensible God is the image of the intellectual, the greatest, best, and fairest being']",['5'],1
+INTELLECTUAL,PERSON,['The intellectual is a concept mentioned in the text'],['5'],1
+UNIVERSE,,[''],['5'],1
