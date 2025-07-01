@@ -12,7 +12,7 @@ from graph_generation.index.operations.build_noun_graph.np_extractors.regex_extr
 # TODO: Import or define PipelineCache, WorkflowCallbacks, and any config needed
 
 # Set OpenAI API key as environment variable for fnllm
-os.environ["OPENAI_API_KEY"] = "put-your-OpenAI_API-key-here"
+os.environ["OPENAI_API_KEY"] = "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"
 
 # Placeholder cache and callbacks (replace with real implementations as needed)
 class DummyCache:

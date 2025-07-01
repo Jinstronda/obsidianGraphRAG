@@ -9,29 +9,34 @@ import asyncio
 import threading
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from graph_generation.language_model.providers.fnllm.base.config import JsonStrategy, RetryStrategy
-from graph_generation.language_model.providers.fnllm.openai import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
-from graph_generation.language_model.providers.fnllm.openai.types.chat.parameters import OpenAIChatParameters
+# Commented out unresolved imports
+# from graph_generation.language_model.providers.fnllm.base.config import ...
+# from graph_generation.language_model.providers.fnllm.openai import ...
+# from graph_generation.language_model.providers.fnllm.openai.types.chat.parameters import ...
 
-import graphrag.config.defaults as defs
-from graph_generation.language_model.providers.fnllm.cache import graph_generation.language_model.providers.fnllmCacheProvider
+import graph_generation.config.defaults as defs
+from graph_generation.cache.pipeline_cache import PipelineCache
+from graph_generation.callbacks.workflow_callbacks import WorkflowCallbacks
+from graph_generation.config.models.language_model_config import LanguageModelConfig
+from graph_generation.index.typing.error_handler import ErrorHandlerFn
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine
 
-    from graphrag.cache.pipeline_cache import PipelineCache
-    from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-    from graphrag.config.models.language_model_config import (
+    from graph_generation.cache.pipeline_cache import PipelineCache
+    from graph_generation.callbacks.workflow_callbacks import WorkflowCallbacks
+    from graph_generation.config.models.language_model_config import (
         LanguageModelConfig,
     )
-    from graphrag.index.typing.error_handler import ErrorHandlerFn
+    from graph_generation.index.typing.error_handler import ErrorHandlerFn
 
 
-def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider | None:
-    """Create an FNLLM cache from a pipeline cache."""
-    if cache is None:
-        return None
-    return FNLLMCacheProvider(cache).child(name)
+# Commented out undefined FNLLMCacheProvider usage
+# def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider | None:
+#     """Create an FNLLM cache from a pipeline cache."""
+#     if cache is None:
+#         return None
+#     return FNLLMCacheProvider(cache).child(name)
 
 
 def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:

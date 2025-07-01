@@ -11,7 +11,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
-from graphrag.data_model.types import TextEmbedder
+from graph_generation.data_model.types import TextEmbedder
 from graph_generation.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
