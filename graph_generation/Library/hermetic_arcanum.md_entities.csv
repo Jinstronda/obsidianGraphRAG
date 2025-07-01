@@ -1,0 +1,39 @@
+title,type,description,text_unit_ids,frequency
+HERMETIC ARCANUM,ORGANIZATION,['The Hermetic Arcanum is a secret organization dedicated to the study of hermetic philosophy and the secrets of nature and art'],['0'],1
+AUTHOR,PERSON,['The author of the text is anonymous and goes by the pen name penes nos unda tagi'],['0'],1
+GEO,GEO,"['The text mentions various geographical locations such as the Indies, the Eastern coast, and the Western coast']",['0'],1
+EVENT,EVENT,"[""The text describes various events related to the process of creating the Philosophers' Stone, including sublimation, solution, reduction, and fixation""]",['0'],1
+ALCHEMY,ORGANIZATION,['Alchemy is the ancient practice of transmuting base metals into gold and creating the elixir of life'],['0'],1
+SOL,PERSON,['Sol is a symbolic representation of the sun in alchemical texts'],['0'],1
+LUNA,PERSON,['Luna is a symbolic representation of the moon in alchemical texts'],['0'],1
+PHILOSOPHERS,,"['', '']","['0', '2']",2
+FIRE,EVENT,"['The Fire is a key element in the text, symbolizing purification and transformation']",['1'],1
+QUINTARA,GEO,['Quintara is a country that brokered the hostage exchange between Firuzabad and Aurelia\nQuintara is mentioned as a country negotiating a swap of money in exchange for hostages'],['1'],1
+FIRUZABAD,GEO,['Firuzabad is a location where Aurelians were held as hostages\nFiruzabad is a location where the hostage exchange negotiation took place'],['1'],1
+AURELIA,GEO,['Aurelia is a country seeking to release hostages'],['1'],1
+TIRUZIA,GEO,['Tiruzia is the capital of Firuzabad where the Aurelians were being held'],['1'],1
+KROHAARA,GEO,['Krohaara is the capital city in Quintara where funds were transferred as part of a hostage exchange'],['1'],1
+CASHION,GEO,['Cashion is the capital city in Aurelia where the Aurelians were welcomed'],['1'],1
+SAMUEL NAMARA,PERSON,"[""Samuel Namara is a hostage who was part of the exchange in Firuzabad\nSamuel Namara is an Aurelian businessman held in Tiruzia's Alhamia Prison""]",['1'],1
+ALHAMIA PRISON,GEO,['Alhamia Prison is a prison in Tiruzia where Samuel Namara was held'],['1'],1
+DURKE BATAGLANI,PERSON,['Durke Bataglani is a hostage who was part of the exchange in Firuzabad)<|COMPLETE|>\nDurke Bataglani is an Aurelian journalist held hostage in Firuzabad'],['1'],1
+MEGGIE TAZBAH,PERSON,['Meggie Tazbah is a hostage who was part of the exchange in Firuzabad\nMeggie Tazbah is an environmentalist with Bratinas nationality held hostage in Firuzabad'],['1'],1
+ELIXIR,ORGANIZATION,['The Elixir is a substance that can be multiplied in virtue and projected onto other substances to create a powerful effect'],['2'],1
+MERCURY,GEO,['Mercury is a substance that can be purified and transformed into pure Elixir'],['2'],1
+SOL,GEO,['Sol is a celestial body that shines most purely when affected by the Elixir\nSol is a celestial body that plays a significant role in the workings of the Elixir'],['2'],1
+ARNOLD OF VILLA NOVA,PERSON,['Arnold of Villa Nova is a philosopher who wrote about the virtues of the Elixir'],['2'],1
+LULLIUS,PERSON,['Lullius is a philosopher who wrote about the virtues of the Elixir'],['2'],1
+PHILOSOPHER,PERSON,['The Philosopher is a figure who instructs about the Times of the Stone and the workings of the Elixir'],['2'],1
+THREE-HEADED DRAGON,ORGANIZATION,['The Three-Headed Dragon is a mythical creature associated with the Golden Fleece'],['2'],1
+GOLDEN FLEECE,ORGANIZATION,['The Golden Fleece is a valuable object guarded by the Three-Headed Dragon'],['2'],1
+SPIRIT OF ETERNAL LIGHT,PERSON,['The Spirit of Eternal Light is invoked for guidance in understanding the Elixir'],['2'],1
+LUNA,GEO,"[""Luna is a celestial body associated with the Elixir and the Philosophers' Significator""]",['2'],1
+SATURN,GEO,['Saturn is a celestial body with two houses assigned by the Ancients in the Philosophical work'],['2'],1
+AQUARIUS,GEO,['Aquarius is a zodiac sign associated with the Blackness of the work of the Magistery'],['2'],1
+PISCES,GEO,['Pisces is a zodiac sign where the work turns black in the Philosophical work'],['2'],1
+ARIES,GEO,['Aries is a zodiac sign where the sublimation or separation of the Elements begins in the Philosophical work'],['2'],1
+CANCER,GEO,['Cancer is a zodiac sign that adds great whiteness and splendor to the Philosophical work'],['2'],1
+LEO,GEO,['Leo is a zodiac sign associated with the Regal Mansion of the Sun and the Solar work'],['2'],1
+LIBRA,GEO,['Libra is a zodiac sign where the Solar work is terminated into a Ruby Stone or perfect Sulphur'],['2'],1
+SCORPIO,GEO,['Scorpio is a zodiac sign required for the completing of the Elixir in the Philosophical work'],['2'],1
+SAGITTARIUS,GEO,['Sagittarius is a zodiac sign required for the completing of the Elixir in the Philosophical work'],['2'],1

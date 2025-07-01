@@ -1,0 +1,42 @@
+source,target,description,text_unit_ids,weight
+NATURE,ANIMA MUNDI,['Nature encompasses all creatures and Anima Mundi is the universal fire within the universe\nNature encompasses all creatures and Anima Mundi is the universal fire'],['0'],16.0
+NATURE,HEAVENLY BODIES,['Heavenly bodies influence nature and the movement of creatures\nNature is influenced by the movement of heavenly bodies'],['0'],119.0
+NATURE,SPIRITUS MUNDI,['Nature encompasses all creatures and Spiritus Mundi is the universal spirit'],['0'],7.0
+NATURE,PRIMA MATERIA,['Nature encompasses all creatures and Prima Materia is the first matter'],['0'],8.0
+ANIMA MUNDI,SPIRITUS MUNDI,['Anima Mundi is the universal fire while Spiritus Mundi is the universal spirit\nAnima Mundi is related to Spiritus Mundi as the universal fire'],['0'],14.0
+ANIMA MUNDI,PRIMA MATERIA,['Anima Mundi is the first creature of Divine Omnipotence and is related to Prima Materia'],['0'],8.0
+ANIMA MUNDI,HEAVENLY BODIES,['Anima Mundi is influenced by the movement of heavenly bodies'],['0'],5.0
+HEAVENLY BODIES,SPIRITUS MUNDI,"['Heavenly bodies influence Spiritus Mundi, the universal spirit\nSpiritus Mundi is influenced by the movement of heavenly bodies']",['0'],16.0
+HEAVENLY BODIES,PRIMA MATERIA,['Prima Materia is influenced by the movement of heavenly bodies'],['0'],6.0
+SPIRITUS MUNDI,PRIMA MATERIA,"['Spiritus Mundi is related to Prima Materia as the universal spirit\nSpiritus(""entity""\nSpiritus Mundi animates all things generated from Prima Materia\nPrima Materia is related to Spiritus Mundi as the first matter']",['0'],235.0
+PRIMA MATERIA,UNIVERSAL SPERM,['Prima Materia is the first matter from which the universal sperm is generated'],['0'],14.0
+ALEMBIC OF THE AIR,UNIVERSAL SPERM,['Alembic of the air is where vapors are condensed to generate the universal sperm'],['0'],162.0
+CENTRAL INSTITUTION,MARTIN SMITH,['Martin Smith is the Chair of the Central Institution and leads press conferences'],['1'],1.0
+FIRUZABAD,AURELIA,"['Firuzabad negotiated a hostage exchange with Aurelia', 'Firuzabad negotiated a hostage exchange with Aurelia']","['1', '2']",4.0
+FIRUZABAD,QUINTARA,['Quintara brokered the hostage exchange between Firuzabad and Aurelia'],['1'],2.0
+FIRUZABAD,SAMUEL NAMARA,['Samuel Namara was a hostage in Firuzabad'],['1'],2.0
+FIRUZABAD,MEGGIE TAZBAH,['Meggie Tazbah was a hostage in Firuzabad'],['1'],2.0
+FIRUZABAD,DURKE BATAGLANI,['Durke Bataglani was a hostage in Firuzabad'],['1'],1.0
+AURELIA,QUINTARA,['Quintara brokered the hostage exchange between Firuzabad and Aurelia'],['1'],2.0
+SAMUEL NAMARA,ALHAMIA PRISON,"['Samuel Namara was a prisoner at Alhamia prison', 'Samuel Namara was a prisoner at Alhamia prison']","['1', '2']",16.0
+SAMUEL NAMARA,MEGGIE TAZBAH,"['Samuel Namara and Meggie Tazbah were exchanged in the same hostage release', 'Samuel Namara and Meggie Tazbah were exchanged in the same hostage release']","['1', '2']",4.0
+SAMUEL NAMARA,DURKE BATAGLANI,"['Samuel Namara and Durke Bataglani were exchanged in the same hostage release', 'Samuel Namara and Durke Bataglani were exchanged in the same hostage release']","['1', '2']",4.0
+DURKE BATAGLANI,MEGGIE TAZBAH,"['Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release', 'Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release']","['1', '2']",4.0
+VAPORS,WATER,['Vapors are resolved into water through circulation and fermentation'],['2'],7.0
+VAPORS,GUR,['Gur is formed from vapors through fermentation'],['2'],5.0
+STONES,CORROSIVE WATER,['Corrosive water dissolves stones'],['2'],9.0
+ROCKS,CORROSIVE WATER,['Corrosive water dissolves rocks'],['2'],9.0
+CORROSIVE WATER,SALT,['Salt is coagulated by corrosive water'],['2'],6.0
+SALT,VITRIOLIC SALT,['Vitriolic salt is formed from salt by succeeding vapors'],['2'],8.0
+MINERS,SAMUEL NAMARA,['Samuel Namara was held in Alhamia Prison by miners'],['2'],3.0
+MINERS,DURKE BATAGLANI,['Durke Bataglani was held hostage by miners'],['2'],3.0
+MINERS,MEGGIE TAZBAH,['Meggie Tazbah was held hostage by miners'],['2'],1.0
+SAMUEL NAMARA,FIRUZABAD,['Samuel Namara was a hostage in Firuzabad'],['2'],2.0
+DURKE BATAGLANI,FIRUZABAD,['Durke Bataglani was a hostage in Firuzabad'],['2'],2.0
+MEGGIE TAZBAH,FIRUZABAD,['Meggie Tazbah was a hostage in Firuzabad'],['2'],2.0
+QUINTARA,AURELIA,['Quintara brokered the hostage exchange between Firuzabad and Aurelia'],['2'],2.0
+QUINTARA,FIRUZABAD,['Quintara brokered the hostage exchange between Firuzabad and Aurelia'],['2'],2.0
+SPIRITUS MUNDI,HUMIDITY,['Spiritus Mundi generates humidity and vinegar'],['2'],6.0
+ANIMA MUNDI,HUMIDITY,['Anima Mundi generates animals out of humidity'],['2'],8.0
+EMERALD TABLET OF HERMES,ALCHEMY,['The Emerald Tablet of Hermes is a key text in alchemy'],['2'],1.0
+UNIVERSAL FIRE,FERMENTATION,['Universal fire begins fermentation and putrefaction'],['2'],7.0

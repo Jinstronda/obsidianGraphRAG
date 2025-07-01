@@ -1,0 +1,69 @@
+source,target,description,text_unit_ids,weight
+INTERNET ENCYCLOPEDIA OF PHILOSOPHY,RENE DESCARTES,"[""Rene Descartes' works are featured in the Internet Encyclopedia of Philosophy""]",['0'],8.0
+RENE DESCARTES,MICHAEL SOLY,"[""Michael Soly published the first edition of Descartes' Meditations""]",['0'],7.0
+RENE DESCARTES,LOUIS ELZEVIR,"[""Louis Elzevir published the second edition of Descartes' Meditations""]",['0'],7.0
+RENE DESCARTES,DUKE DE LUYNES,"[""Duke de Luynes translated Descartes' works into French""]",['0'],6.0
+RENE DESCARTES,PERE MERSENNE,"[""Pere Mersenne assisted in the publication of Descartes' works""]",['0'],6.0
+RENE DESCARTES,LEO X,['Leo X presided over the Lateran Council that condemned certain tenets'],['0'],5.0
+RENE DESCARTES,ARCHIMEDES,"[""Archimedes' geometric demonstrations are compared to Descartes' reasonings""]",['0'],8.0
+RENE DESCARTES,APOLLONIUS,"[""Apollonius' work on conic sections is mentioned in relation to Descartes' reasonings""]",['0'],7.0
+RENE DESCARTES,PAPPUS,"[""Pappus' work on geometry is mentioned in relation to Descartes' reasonings""]",['0'],7.0
+RENE DESCARTES,SORBONNE,"[""The Sorbonne is mentioned in relation to Descartes' reasonings""]",['0'],1.0
+RENE DESCARTES,WISDOM OF SOLOMON,"[""The Wisdom of Solomon is referenced in relation to Descartes' reasonings""]",['0'],5.0
+RENE DESCARTES,ROMANS,"[""The Book of Romans is referenced in relation to Descartes' reasonings""]",['0'],5.0
+ALHAMIA PRISON,SAMUEL NAMARA,['Samuel Namara was held in Alhamia Prison'],['0'],14.0
+TIRUZIA,AURELIA,['Tiruzia is mentioned in relation to Aurelia'],['0'],4.0
+KROHAARA,QUINTARA,['Krohaara is the capital city in Quintara'],['0'],6.0
+CASHION,AURELIA,['Cashion is the capital city in Aurelia'],['0'],6.0
+SAMUEL NAMARA,MEGGIE TAZBAH,['Samuel Namara and Meggie Tazbah were exchanged in the same hostage release'],['0'],5.0
+SAMUEL NAMARA,DURKE BATAGLANI,['Samuel Namara and Durke Bataglani were exchanged in the same hostage release'],['0'],5.0
+SAMUEL NAMARA,FIRUZABAD,['Samuel Namara was a hostage in Firuzabad'],['0'],5.0
+DURKE BATAGLANI,MEGGIE TAZBAH,['Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release'],['0'],5.0
+DURKE BATAGLANI,FIRUZABAD,['Durke Bataglani was a hostage in Firuzabad'],['0'],1.0
+MEGGIE TAZBAH,FIRUZABAD,['Meggie Tazbah was a hostage in Firuzabad'],['0'],5.0
+CENTRAL INSTITUTION,MARTIN SMITH,['Martin Smith is the Chair of the Central Institution and answers questions at press conferences'],['1'],9.0
+CENTRAL INSTITUTION,MARKET STRATEGY COMMITTEE,['The Market Strategy Committee is a part of the Central Institution and makes decisions on interest rates'],['1'],1.0
+CENTRAL INSTITUTION,FEDERAL RESERVE,['The Central Institution is similar to the Federal Reserve in setting interest rates'],['1'],6.0
+CENTRAL INSTITUTION,POLICY DECISION,['The Central Institution makes key policy decisions that impact the market'],['1'],8.0
+CENTRAL INSTITUTION,PRESS CONFERENCE,['The Central Institution holds press conferences to communicate decisions'],['1'],7.0
+CENTRAL INSTITUTION,INVESTORS,"[""Investors have expectations regarding the Central Institution's decisions""]",['1'],6.0
+CENTRAL INSTITUTION,INTEREST RATE,"[""Interest rates are a key focus of the Central Institution's decisions""]",['1'],1.0
+GOD,HUMAN MIND,['God is the creator of the human mind and all its capacities'],['2'],9.0
+HUMAN MIND,SELF,"[""The human mind is aware of the self's imperfections and aspirations""]",['2'],7.0
+SELF,PARENTS,['The self is dependent on parents for biological existence'],['2'],5.0
+MIND,SENSES,"['The mind can detach from the senses to contemplate abstract concepts', 'The senses provide information to the mind, but can sometimes be deceptive, leading to errors in perception']","['2', '4']",12.0
+IDEA,TRUTH,['Ideas can represent truth or falsehood'],['2'],4.0
+IDEA,ERROR,['Errors result from a lack of knowledge or understanding of ideas'],['2'],1.0
+ERROR,KNOWLEDGE,['Errors can result from a lack of knowledge or understanding'],['2'],4.0
+ERROR,FREE WILL,['Errors can also result from the exercise of free will'],['2'],3.0
+ERROR,CHOICE,['Errors can be made in the process of making choices'],['2'],2.0
+CHOICE,WILL,['The will plays a role in making choices'],['2'],1.0
+CAPACITY,KNOWLEDGE,['Capacity is related to the ability to acquire knowledge'],['2'],5.0
+BODY,PLEASURE,['The body experiences pleasure in response to beneficial stimuli'],['3'],8.0
+BODY,PAIN,['The body experiences pain in response to harmful stimuli'],['3'],8.0
+BODY,HUNGER,['The body experiences hunger as a signal for food intake'],['3'],7.0
+BODY,THIRST,['The body experiences thirst as a signal for water intake'],['3'],7.0
+BODY,JOY,['The body can experience joy as a positive emotional state'],['3'],6.0
+BODY,SADNESS,['The body can experience sadness as a negative emotional state'],['3'],6.0
+BODY,ANGER,['The body can experience anger as a hostile emotion'],['3'],6.0
+BODY,HARDNESS,['The body perceives hardness as a tactile quality'],['3'],5.0
+BODY,HEAT,['The body perceives heat as a tactile quality'],['3'],5.0
+BODY,LIGHT,['The body perceives light as a visual sensation'],['3'],5.0
+BODY,COLOUR,['The body perceives color as a visual attribute'],['3'],5.0
+BODY,SCENTS,['The body perceives scents as olfactory qualities'],['3'],5.0
+BODY,SOUNDS,['The body perceives sounds as auditory sensations'],['3'],5.0
+BODY,SKY,['The body perceives the sky as the atmospheric region above the Earth'],['3'],4.0
+BODY,EARTH,['The body perceives the Earth as the planet on which we live'],['3'],4.0
+BODY,SEA,['The body perceives the sea as a large body of salt water'],['3'],1.0
+BODY,MEMBERS,"['The body consists of various members, such as head, hands, and feet']",['3'],7.0
+BODY,APPETITES,"['The body experiences appetites, such as hunger and thirst']",['3'],6.0
+BODY,PASSIONS,"['The body can experience passions, such as joy, sadness, and anger']",['3'],6.0
+BODY,TACTILE QUALITIES,"['The body perceives tactile qualities, such as hardness and heat']",['3'],5.0
+BODY,VISUAL QUALITIES,"['The body perceives visual qualities, such as light and color']",['3'],5.0
+BODY,OLFACTORY QUALITIES,"['The body perceives olfactory qualities, such as scents']",['3'],5.0
+BODY,AUDITORY QUALITIES,"['The body perceives auditory qualities, such as sounds']",['3'],1.0
+MIND,BODY,"['The body and mind are distinct entities, with the mind being indivisible and the body being divisible']",['4'],8.0
+MIND,MEMORY,"['Memory helps connect past experiences with present perceptions, aiding in the understanding of reality']",['4'],7.0
+MIND,UNDERSTANDING,"['The understanding helps analyze and interpret sensory information, correcting errors in perception']",['4'],1.0
+MIND,CONSCIOUSNESS,"[""Consciousness is the awareness of one's thoughts and perceptions, influenced by the mind""]",['4'],6.0
+SENSES,DECEPTION,"['Deception can occur when the senses provide false information, leading to misunderstandings']",['4'],1.0

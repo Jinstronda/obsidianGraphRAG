@@ -1,0 +1,18 @@
+title,type,description,text_unit_ids,frequency
+SIX KEYS OF EUDOXUS,EVENT,"[""The Six Keys of Eudoxus is a text detailing the alchemical processes and operations involved in the creation of the Philosopher's Stone""]",['0'],1
+HERMES,PERSON,['Hermes is mentioned in the text as a figure who demonstrated the operations of the First Key'],['0'],1
+ARTEFIUS,PERSON,['Artefius is mentioned as a philosopher who passed over the Preparation of Mercury in silence'],['0'],1
+TREVISAN,PERSON,['Trevisan is mentioned as a philosopher who passed over the Preparation of Mercury in silence'],['0'],1
+FLAMMEL,PERSON,['Flammel is mentioned as a philosopher who passed over the Preparation of Mercury in silence'],['0'],1
+JOHN PONTANUS,PERSON,['John Pontanus is mentioned as a philosopher who discussed the fermentation of the Stone\nJohn Pontanus is mentioned as a philosopher who spoke about the conversion of superfluities of the Stone into a true essence'],['0'],1
+COSMOPOLITE,PERSON,['Cosmopolite is mentioned as a philosopher who discussed the purification of Mercury\nCosmopolite is mentioned as a philosopher who discussed the fermentation of the Stone'],['0'],1
+GEORGE RIPLEY,PERSON,['George Ripley is mentioned as a philosopher who discussed the multiplication of the Stone\nGeorge Ripley is mentioned as a philosopher who defined the compound of Art as a mixture of Argent vive and Sulphur'],['0'],1
+SENIOR,PERSON,['Senior is mentioned as a philosopher who advised reducing the highest fume to the lowest in the process of making the Stone\nSenior is mentioned as a philosopher who discussed the multiplication of the Stone'],['0'],1
+JOHN DEE,PERSON,['John Dee is mentioned as a philosopher who discussed the purification of the Elements and Principles'],['0'],1
+FIRST KEY,,[''],['0'],1
+STONE,,[''],['0'],1
+MERCURY,,[''],['0'],1
+COMPOUND OF ART,,[''],['0'],1
+ELEMENTS AND PRINCIPLES,,[''],['0'],1
+FERMENTATION OF THE STONE,,[''],['0'],1
+MULTIPLICATION OF THE STONE,,[''],['0'],1

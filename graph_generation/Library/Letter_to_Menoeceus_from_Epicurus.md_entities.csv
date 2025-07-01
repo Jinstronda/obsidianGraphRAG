@@ -1,0 +1,17 @@
+title,type,description,text_unit_ids,frequency
+GOD,PERSON,"['God is described as a living being immortal and happy, according to common sense']",['0'],1
+HUMANKIND,PERSON,['Humans are described as having notions of gods'],['0'],1
+QUINTARA,GEO,['Quintara is mentioned as a location where financial transactions took place'],['0'],1
+TIRUZIA,GEO,['Tiruzia is mentioned as the capital of Firuzabad'],['0'],1
+KROHAARA,GEO,['Krohaara is mentioned as the capital city of Quintara'],['0'],1
+CASHION,GEO,['Cashion is mentioned as the capital city of Aurelia'],['0'],1
+SAMUEL NAMARA,PERSON,['Samuel Namara is mentioned as a businessman held in Alhamia Prison'],['0'],1
+DURKE BATAGLANI,PERSON,['Durke Bataglani is mentioned as a journalist held hostage'],['0'],1
+MEGGIE TAZBAH,PERSON,['Meggie Tazbah is mentioned as an environmentalist and hostage'],['0'],1
+ALHAMIA PRISON,GEO,['Alhamia Prison is mentioned as a location where Samuel Namara was held'],['0'],1
+FIRUZABAD,,[''],['0'],1
+FIRUZI,ORGANIZATION,['Firuzi funds were involved in the hostage exchange'],['0'],1
+HOSTAGES,EVENT,['The Aurelians were regarded as hostages in Firuzabad'],['0'],1
+SWAP,EVENT,['A swap of money for hostages was orchestrated by Quintara'],['0'],1
+BRATINAS,PERSON,['Meggie Tazbah holds Bratinas nationality'],['0'],1
+AURELIA,,[''],['0'],1

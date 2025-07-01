@@ -1,0 +1,14 @@
+source,target,description,text_unit_ids,weight
+EMERALD TABLE,SUN,['The Sun is described as the father in the process of transmutation in the Emerald Table'],['0'],7.0
+EMERALD TABLE,MOON,['The Moon is described as the mother in the process of transmutation in the Emerald Table'],['0'],7.0
+EMERALD TABLE,WIND,['The Wind is described as carrying the Stone in its womb in the process of transmutation in the Emerald Table'],['0'],7.0
+EMERALD TABLE,EARTH,['The Earth is described as the nurse in the process of transmutation in the Emerald Table'],['0'],7.0
+EMERALD TABLE,MERCURY,['Mercury is mentioned as a substance that can be overcome in the process of transmutation in the Emerald Table'],['0'],1.0
+EMERALD TABLE,STONE,['The Stone is a key element in the process of transmutation described in the Emerald Table'],['0'],8.0
+EMERALD TABLE,MATTER,['The First Matter is the common substance from which all things arise in the Emerald Table'],['0'],8.0
+EMERALD TABLE,FOUR ELEMENTS,['The Four Elements are created by God in the Emerald Table'],['0'],8.0
+EMERALD TABLE,SPIRIT,['The Spirit is a key component in the process of transmutation in the Emerald Table'],['0'],8.0
+EMERALD TABLE,BODY,['The Body is transmuted in the process of transmutation in the Emerald Table'],['0'],8.0
+EMERALD TABLE,LEAVEN,['Leaven is a metaphor for the transmutation process in the Emerald Table'],['0'],6.0
+EMERALD TABLE,BAKER,['The Baker is mentioned as a comparison in the Emerald Table to describe the transmutation process'],['0'],6.0
+EMERALD TABLE,SAGE,['The Sage is a figure who imparts wisdom in the Emerald Table'],['0'],1.0

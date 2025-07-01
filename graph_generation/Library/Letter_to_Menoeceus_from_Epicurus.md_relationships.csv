@@ -1,0 +1,17 @@
+source,target,description,text_unit_ids,weight
+QUINTARA,KROHAARA,['Financial transactions took place between Quintara and Krohaara'],['0'],3.0
+QUINTARA,FIRUZI,"['Quintara orchestrated a swap of money for hostages with Firuzabad\nFiruzi funds were transferred to financial institutions in Krohaara, the capital of Quintara']",['0'],8.0
+TIRUZIA,KROHAARA,['A chartered flight from Tiruzia to Krohaara took place'],['0'],2.0
+TIRUZIA,SAMUEL NAMARA,['Samuel Namara was held in Tiruzia'],['0'],4.0
+TIRUZIA,DURKE BATAGLANI,['Durke Bataglani was held in Tiruzia'],['0'],4.0
+TIRUZIA,MEGGIE TAZBAH,['Meggie Tazbah was held in Tiruzia'],['0'],3.0
+KROHAARA,CASHION,['A chartered flight from Krohaara to Cashion took place'],['0'],2.0
+CASHION,AURELIA,"['The Aurelians are on their way to Cashion, the capital of Aurelia']",['0'],3.0
+SAMUEL NAMARA,ALHAMIA PRISON,['Samuel Namara was held in Alhamia Prison'],['0'],8.0
+SAMUEL NAMARA,MEGGIE TAZBAH,['Samuel Namara and Meggie Tazbah were hostages together'],['0'],2.0
+SAMUEL NAMARA,DURKE BATAGLANI,['Samuel Namara and Durke Bataglani were hostages together'],['0'],2.0
+SAMUEL NAMARA,FIRUZABAD,['Samuel Namara was a hostage in Firuzabad'],['0'],2.0
+DURKE BATAGLANI,MEGGIE TAZBAH,['Meggie Tazbah and Durke Bataglani were hostages together'],['0'],2.0
+DURKE BATAGLANI,FIRUZABAD,['Durke Bataglani was a hostage in Firuzabad'],['0'],1.0
+MEGGIE TAZBAH,FIRUZABAD,['Meggie Tazbah was a hostage in Firuzabad'],['0'],2.0
+FIRUZI,HOSTAGES,['The Aurelians were regarded as hostages in Firuzabad'],['0'],3.0
