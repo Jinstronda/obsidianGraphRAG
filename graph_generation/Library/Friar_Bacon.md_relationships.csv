@@ -1,6 +1,0 @@
-source,target,description,text_unit_ids,weight
-CENTRAL INSTITUTION,MARTIN SMITH,['Martin Smith is the Chair of the Central Institution and will answer questions at a press conference'],['0'],9.0
-VERDANTIS,CENTRAL INSTITUTION,['Central Institution is the Federal Reserve of Verdantis'],['1'],7.0
-MARTIN SMITH,CENTRAL INSTITUTION,['Martin Smith is the Chair of the Central Institution and will answer questions at a press conference'],['1'],1.0
-MARKET STRATEGY COMMITTEE,CENTRAL INSTITUTION,['Market Strategy Committee is part of the Central Institution'],['1'],1.0
-CENTRAL INSTITUTION,POLICY DECISION,['Central Institution is planning to release its latest policy decision'],['1'],6.0

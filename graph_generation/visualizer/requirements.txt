@@ -1,6 +1,0 @@
-numpy
-networkx
-plotly
-python-louvain
-scikit-learn
-openai 

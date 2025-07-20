@@ -1,0 +1,6 @@
+{
+  "source_path": "G-Indexation/Hermetic_Library",
+  "sentences_per_chunk": 1,
+  "overlap_sentences": 0,
+  "output_folder": "G-Indexation/Graph_fragments"
+} 

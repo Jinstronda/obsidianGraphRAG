@@ -1,0 +1,26 @@
+# Core dependencies for G-Indexation GraphRAG system
+neo4j-graphrag>=1.8.0
+python-dotenv>=1.0.0
+nltk>=3.8.0
+
+# Additional dependencies that may be needed
+numpy>=2.0.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+networkx>=3.0
+matplotlib>=3.7.0
+plotly>=5.15.0
+
+# Text processing and NLP
+spacy>=3.6.0
+transformers>=4.30.0
+torch>=2.0.0
+
+# Database and storage
+neo4j>=5.17.0
+pymongo>=4.4.0
+
+# Utilities
+tqdm>=4.65.0
+click>=8.1.0
+rich>=13.0.0 
