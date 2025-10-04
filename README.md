@@ -8,7 +8,7 @@ If you keep notes in Obsidian, you've probably forgotten half of what you wrote.
 
 The system reads your notes, builds a knowledge graph, and lets you query it like talking to someone who's read everything you've ever written. It finds connections you didn't know existed.
 
-This solves what Matthew McConaughey wanted: an LLM trained only on your own data. Not the entire internet. Just your thoughts, your notes, your knowledge.
+This solves what Matthew McConaughey wanted: an LLM based only on your own data. Not the entire internet. Just your thoughts, your notes, your knowledge.
 
 It works locally. The embeddings and reranking run on your machine. Only the LLM calls go to Gemini's API, which is free.
 
