@@ -267,7 +267,7 @@ class IncrementalVaultUpdater:
             
             try:
                 # Chunk the file
-                chunks = self.chunker.chunk_file(abs_path)
+                chunks = self.chunker.process_markdown_file(Path(abs_path))
                 
                 if not chunks:
                     print(f"   ⚠️  No chunks generated")
@@ -341,7 +341,7 @@ class IncrementalVaultUpdater:
                     doc_id = self.monitor.generate_doc_id(file_path)
                 
                 # Chunk the file
-                chunks = self.chunker.chunk_file(abs_path)
+                chunks = self.chunker.process_markdown_file(Path(abs_path))
                 
                 if not chunks:
                     print(f"   ⚠️  No chunks generated")
