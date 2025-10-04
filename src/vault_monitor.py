@@ -277,11 +277,11 @@ class IncrementalVaultUpdater:
                 
                 # Convert to content list format
                 content_list = []
-                for chunk in chunks:
+                for idx, chunk in enumerate(chunks):
                     content_item = {
                         "type": "text",
                         "text": chunk['content'],
-                        "page_idx": chunk['chunk_index']
+                        "page_idx": idx  # Use enumerate index
                     }
                     content_list.append(content_item)
                 
@@ -351,11 +351,11 @@ class IncrementalVaultUpdater:
                 
                 # Convert to content list format
                 content_list = []
-                for chunk in chunks:
+                for idx, chunk in enumerate(chunks):
                     content_item = {
                         "type": "text",
                         "text": chunk['content'],
-                        "page_idx": chunk['chunk_index']
+                        "page_idx": idx  # Use enumerate index
                     }
                     content_list.append(content_item)
                 
