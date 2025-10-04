@@ -188,6 +188,78 @@ async def get_config():
     }
 
 
+@app.post("/api/sync")
+async def sync_vault():
+    """Incrementally sync vault changes"""
+    if not rag_system:
+        return {"error": "RAG system not initialized"}
+    
+    try:
+        # Import here to avoid circular dependencies
+        from src.vault_monitor import VaultMonitor, IncrementalVaultUpdater
+        
+        # Initialize monitor
+        tracking_file = os.path.join(rag_system.working_dir, "vault_tracking.json")
+        monitor = VaultMonitor(rag_system.vault_path, tracking_file)
+        
+        # Scan for changes
+        new_files, modified_files, deleted_files = monitor.scan_vault()
+        
+        # Create updater and sync
+        updater = IncrementalVaultUpdater(rag_system, monitor)
+        await updater.sync_vault()
+        
+        return {
+            "status": "success",
+            "changes": {
+                "new": len(new_files),
+                "modified": len(modified_files),
+                "deleted": len(deleted_files)
+            },
+            "total_tracked": len(monitor.file_registry)
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e)
+        }
+
+
+@app.get("/api/vault/status")
+async def vault_status():
+    """Get vault sync status"""
+    if not rag_system:
+        return {"error": "RAG system not initialized"}
+    
+    try:
+        from src.vault_monitor import VaultMonitor
+        
+        tracking_file = os.path.join(rag_system.working_dir, "vault_tracking.json")
+        monitor = VaultMonitor(rag_system.vault_path, tracking_file)
+        
+        # Quick scan
+        new_files, modified_files, deleted_files = monitor.scan_vault()
+        
+        return {
+            "status": "success",
+            "vault_path": rag_system.vault_path,
+            "total_tracked": len(monitor.file_registry),
+            "pending_changes": {
+                "new": len(new_files),
+                "modified": len(modified_files),
+                "deleted": len(deleted_files)
+            },
+            "needs_sync": len(new_files) + len(modified_files) + len(deleted_files) > 0
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e)
+        }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

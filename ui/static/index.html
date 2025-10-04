@@ -316,12 +316,20 @@
             </div>
 
             <div>
+                <h3 class="text-sm font-medium mb-3 text-gray-300">Vault Sync</h3>
+                <div id="syncStatus" class="text-xs text-gray-400 mb-2 p-2 bg-[#0f172a] rounded">
+                    <p>Status: <span id="syncStatusText">Checking...</span></p>
+                    <p class="mt-1">Pending: <span id="syncPendingCount">-</span></p>
+                </div>
+                <button id="syncVaultBtn" class="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors mb-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span id="syncBtnText">Sync Vault</span>
+                </button>
+            </div>
+
+            <div>
                 <h3 class="text-sm font-medium mb-3 text-gray-300">Actions</h3>
                 <button id="exportChatBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors mb-2">
                     Export Chat
-                </button>
-                <button id="downloadLogsBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors">
-                    Download Logs
                 </button>
             </div>
 
@@ -737,6 +745,71 @@
             }
         }
 
+        async function checkVaultStatus() {
+            try {
+                const response = await fetch('/api/vault/status');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const pendingTotal = data.pending_changes.new + data.pending_changes.modified + data.pending_changes.deleted;
+                    
+                    if (data.needs_sync) {
+                        document.getElementById('syncStatusText').textContent = 'Out of sync';
+                        document.getElementById('syncStatusText').className = 'text-yellow-400';
+                        document.getElementById('syncPendingCount').textContent = `${pendingTotal} changes (+${data.pending_changes.new} ~${data.pending_changes.modified} -${data.pending_changes.deleted})`;
+                    } else {
+                        document.getElementById('syncStatusText').textContent = 'Up to date';
+                        document.getElementById('syncStatusText').className = 'text-green-400';
+                        document.getElementById('syncPendingCount').textContent = 'No changes';
+                    }
+                } else {
+                    document.getElementById('syncStatusText').textContent = 'Error';
+                    document.getElementById('syncPendingCount').textContent = data.error || 'Unknown error';
+                }
+            } catch (err) {
+                console.error('Vault status check failed:', err);
+                document.getElementById('syncStatusText').textContent = 'Error';
+            }
+        }
+
+        async function syncVault() {
+            const syncBtn = document.getElementById('syncVaultBtn');
+            const syncBtnText = document.getElementById('syncBtnText');
+            
+            // Disable button
+            syncBtn.disabled = true;
+            syncBtnText.textContent = 'Syncing...';
+            
+            try {
+                showToast('Starting vault sync...', 'info');
+                
+                const response = await fetch('/api/sync', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const totalChanges = data.changes.new + data.changes.modified + data.changes.deleted;
+                    
+                    if (totalChanges > 0) {
+                        showToast(`Synced ${totalChanges} changes: +${data.changes.new} ~${data.changes.modified} -${data.changes.deleted}`, 'success');
+                    } else {
+                        showToast('Vault is already up to date', 'success');
+                    }
+                    
+                    // Refresh vault status
+                    await checkVaultStatus();
+                } else {
+                    showToast('Sync failed: ' + (data.error || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                console.error('Sync failed:', err);
+                showToast('Sync failed: ' + err.message, 'error');
+            } finally {
+                // Re-enable button
+                syncBtn.disabled = false;
+                syncBtnText.textContent = 'Sync Vault';
+            }
+        }
+
         // ===== EVENT LISTENERS =====
         sendButton.addEventListener('click', sendMessage);
 
@@ -754,6 +827,10 @@
 
         settingsBtn.addEventListener('click', () => {
             settingsPanel.classList.toggle('hidden');
+            // Check vault status when settings panel opens
+            if (!settingsPanel.classList.contains('hidden')) {
+                checkVaultStatus();
+            }
         });
 
         closeSettingsBtn.addEventListener('click', () => {
@@ -762,6 +839,9 @@
 
         clearChatBtn.addEventListener('click', clearChat);
         exportChatBtn.addEventListener('click', exportChat);
+        
+        // Sync vault button
+        document.getElementById('syncVaultBtn').addEventListener('click', syncVault);
 
         // Suggestion buttons
         document.querySelectorAll('.suggestion-btn').forEach(btn => {
@@ -777,8 +857,11 @@
         connectWebSocket();
         updateInputState();
         
-        // Initial health check
-        setTimeout(checkSystemHealth, 1000);
+        // Initial health check and vault status
+        setTimeout(() => {
+            checkSystemHealth();
+            checkVaultStatus();
+        }, 1000);
     </script>
 </body>
 </html>
