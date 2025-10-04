@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d11" for="edge" attr.name="created_at" attr.type="long"/>
+<key id="d10" for="edge" attr.name="file_path" attr.type="string"/>
+<key id="d9" for="edge" attr.name="source_id" attr.type="string"/>
+<key id="d8" for="edge" attr.name="keywords" attr.type="string"/>
+<key id="d7" for="edge" attr.name="description" attr.type="string"/>
+<key id="d6" for="edge" attr.name="weight" attr.type="double"/>
+<key id="d5" for="node" attr.name="created_at" attr.type="long"/>
+<key id="d4" for="node" attr.name="file_path" attr.type="string"/>
+<key id="d3" for="node" attr.name="source_id" attr.type="string"/>
+<key id="d2" for="node" attr.name="description" attr.type="string"/>
+<key id="d1" for="node" attr.name="entity_type" attr.type="string"/>
+<key id="d0" for="node" attr.name="entity_id" attr.type="string"/>
+<graph edgedefault="undirected"><node id="Machine Learning Basics">
+  <data key="d0">Machine Learning Basics</data>
+  <data key="d1">content</data>
+  <data key="d2">Machine Learning Basics covers the fundamentals of machine learning as a subset of artificial intelligence, focusing on systems that learn and improve from experience.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Supervised Learning">
+  <data key="d0">Supervised Learning</data>
+  <data key="d1">concept</data>
+  <data key="d2">Supervised Learning is a training method that involves using labeled data to inform the learning process.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Unsupervised Learning">
+  <data key="d0">Unsupervised Learning</data>
+  <data key="d1">concept</data>
+  <data key="d2">Unsupervised Learning refers to the process of identifying patterns in data that does not have labels.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Deep Learning">
+  <data key="d0">Deep Learning</data>
+  <data key="d1">method</data>
+  <data key="d2">Deep Learning is a complex approach within machine learning that utilizes neural networks with multiple layers for processing data.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Neural Networks">
+  <data key="d0">Neural Networks</data>
+  <data key="d1">concept</data>
+  <data key="d2">Neural Networks are computing systems inspired by biological neurons, structured in interconnected layers designed for processing data.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Input Layer">
+  <data key="d0">Input Layer</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Input Layer is the first layer in a neural network that receives initial data for processing.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Hidden Layers">
+  <data key="d0">Hidden Layers</data>
+  <data key="d1">concept</data>
+  <data key="d2">Hidden Layers are intermediate layers in a neural network that process information before sending it to the output layer.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Output Layer">
+  <data key="d0">Output Layer</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Output Layer is the final layer in a neural network that produces the result after processing through preceding layers.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Retrieval-Augmented Generation (RAG)">
+  <data key="d0">Retrieval-Augmented Generation (RAG)</data>
+  <data key="d1">method</data>
+  <data key="d2">RAG systems integrate retrieval and generation techniques to improve AI responses using external information.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Retriever">
+  <data key="d0">Retriever</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Retriever component in RAG systems is responsible for finding relevant documents to inform AI responses.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Generator">
+  <data key="d0">Generator</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Generator in RAG systems creates responses based on the context provided by the retrieved documents.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Knowledge Base">
+  <data key="d0">Knowledge Base</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Knowledge Base is a component in RAG systems that stores embedded information for retrieval and generation processes.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Note1.md">
+  <data key="d0">Note1.md</data>
+  <data key="d1">content</data>
+  <data key="d2">Note1.md is a document in the user's Obsidian vault that contains content related to machine learning basics and its related concepts.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Note2.md">
+  <data key="d0">Note2.md</data>
+  <data key="d1">content</data>
+  <data key="d2">Note2.md is a document in the user's Obsidian vault detailing neural networks and their architecture.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="Note3.md">
+  <data key="d0">Note3.md</data>
+  <data key="d1">content</data>
+  <data key="d2">Note3.md is a document in the user's Obsidian vault discussing Retrieval-Augmented Generation (RAG) systems and their components.</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267716</data>
+</node>
+<node id="RAG Systems">
+  <data key="d0">RAG Systems</data>
+  <data key="d3">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d2">RAG Systems employ a Retriever to source relevant documents that enhance AI-generated responses.</data>
+  <data key="d1">UNKNOWN</data>
+  <data key="d4">obsidian_vault.md</data>
+  <data key="d5">1759267717</data>
+</node>
+<edge source="Machine Learning Basics" target="Supervised Learning">
+  <data key="d6">1.0</data>
+  <data key="d7">Machine Learning Basics provides information about Supervised Learning as a key training method within the machine learning domain.</data>
+  <data key="d8">education,training method</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Machine Learning Basics" target="Unsupervised Learning">
+  <data key="d6">1.0</data>
+  <data key="d7">Machine Learning Basics also includes Unsupervised Learning as a significant concept in the area of machine learning.</data>
+  <data key="d8">education,training method</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Machine Learning Basics" target="Deep Learning">
+  <data key="d6">1.0</data>
+  <data key="d7">Machine Learning Basics discusses Deep Learning as an advanced method in the subset of machine learning.</data>
+  <data key="d8">advanced approach,training method</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267718</data>
+</edge>
+<edge source="Neural Networks" target="Input Layer">
+  <data key="d6">1.0</data>
+  <data key="d7">Neural Networks utilize the Input Layer to receive and process initial data for further computation.</data>
+  <data key="d8">data processing,neural architecture</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Neural Networks" target="Hidden Layers">
+  <data key="d6">1.0</data>
+  <data key="d7">Neural Networks include Hidden Layers that process data through interconnected nodes.</data>
+  <data key="d8">information processing,neural architecture</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Neural Networks" target="Output Layer">
+  <data key="d6">1.0</data>
+  <data key="d7">Neural Networks conclude processing with the Output Layer, which generates the final results.</data>
+  <data key="d8">neural architecture,result production</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267718</data>
+</edge>
+<edge source="Retriever" target="RAG Systems">
+  <data key="d6">1.0</data>
+  <data key="d7">RAG Systems employ a Retriever to source relevant documents that enhance AI-generated responses.</data>
+  <data key="d8">AI response,component function</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Generator" target="RAG Systems">
+  <data key="d6">1.0</data>
+  <data key="d7">RAG Systems utilize a Generator to create contextual responses based on retrieved information.</data>
+  <data key="d8">AI response,component function</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267718</data>
+</edge>
+<edge source="Knowledge Base" target="RAG Systems">
+  <data key="d6">1.0</data>
+  <data key="d7">RAG Systems depend on a Knowledge Base to hold embedded information necessary for both retrieval and generation processes.</data>
+  <data key="d8">component function,information storage</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267718</data>
+</edge>
+<edge source="Note1.md" target="Note2.md">
+  <data key="d6">1.0</data>
+  <data key="d7">Note1.md is connected to Note2.md, indicating a reference to neural networks in machine learning content.</data>
+  <data key="d8">connected notes,reference</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+<edge source="Note1.md" target="Note3.md">
+  <data key="d6">1.0</data>
+  <data key="d7">Note1.md is connected to Note3.md, showing a reference to RAG systems in machine learning discussions.</data>
+  <data key="d8">connected notes,reference</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267718</data>
+</edge>
+<edge source="Note2.md" target="Note3.md">
+  <data key="d6">1.0</data>
+  <data key="d7">Note2.md is connected to Note3.md, referring to concepts in neural networks related to RAG systems.</data>
+  <data key="d8">connected notes,reference</data>
+  <data key="d9">chunk-7347422f9fc8cacef8d11016ad2cef77</data>
+  <data key="d10">obsidian_vault.md</data>
+  <data key="d11">1759267717</data>
+</edge>
+</graph></graphml>

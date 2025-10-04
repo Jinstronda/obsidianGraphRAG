@@ -1,0 +1,58 @@
+{
+  "doc-7c20f82cb11df1428840f855a9b1a4bc": {
+    "relation_pairs": [
+      [
+        "Hidden Layers",
+        "Neural Networks"
+      ],
+      [
+        "Note2.md",
+        "Note3.md"
+      ],
+      [
+        "RAG Systems",
+        "Retriever"
+      ],
+      [
+        "Neural Networks",
+        "Output Layer"
+      ],
+      [
+        "Input Layer",
+        "Neural Networks"
+      ],
+      [
+        "Deep Learning",
+        "Machine Learning Basics"
+      ],
+      [
+        "Machine Learning Basics",
+        "Unsupervised Learning"
+      ],
+      [
+        "Machine Learning Basics",
+        "Supervised Learning"
+      ],
+      [
+        "Knowledge Base",
+        "RAG Systems"
+      ],
+      [
+        "Note1.md",
+        "Note2.md"
+      ],
+      [
+        "Note1.md",
+        "Note3.md"
+      ],
+      [
+        "Generator",
+        "RAG Systems"
+      ]
+    ],
+    "count": 12,
+    "create_time": 1759267718,
+    "update_time": 1759267718,
+    "_id": "doc-7c20f82cb11df1428840f855a9b1a4bc"
+  }
+}

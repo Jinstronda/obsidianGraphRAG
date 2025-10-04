@@ -1,0 +1,20 @@
+{
+  "doc-7c20f82cb11df1428840f855a9b1a4bc": {
+    "status": "processed",
+    "chunks_count": 1,
+    "chunks_list": [
+      "chunk-7347422f9fc8cacef8d11016ad2cef77"
+    ],
+    "content_summary": "# Document: Note1.md\n**File Path**: C:\\Users\\joaop\\Documents\\Hobbies\\Obsidian Rag\\test_vault\\Note1.md\n**Chunk**: 1/1\n**Created**: 2025-09-30T11:19:36.680399\n**Modified**: 2025-09-30T11:19:36.684387\n\n## Connected Notes\n**Wikilinks**: [[Note2]]\n**Conne...",
+    "content_length": 2550,
+    "created_at": "2025-09-30T21:28:04.540060+00:00",
+    "updated_at": "2025-09-30T22:28:38+00:00",
+    "file_path": "obsidian_vault.md",
+    "track_id": "insert_20250930_222804_562b6745",
+    "metadata": {
+      "processing_start_time": 1759267684,
+      "processing_end_time": 1759267718
+    },
+    "multimodal_processed": true
+  }
+}

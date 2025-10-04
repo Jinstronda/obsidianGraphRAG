@@ -292,7 +292,7 @@ class ObsidianChunker:
             print(f"Vault path does not exist: {self.vault_path}")
             return md_files
         
-        print(f"🔍 Discovering markdown files in: {self.vault_path}")
+        print(f"Discovering markdown files in: {self.vault_path}")
         
         for root, dirs, files in os.walk(self.vault_path):
             # Skip .obsidian folder
@@ -315,7 +315,7 @@ class ObsidianChunker:
             Dictionary with all chunks and metadata
         """
         print("="*70)
-        print("🚀 PROCESSING OBSIDIAN VAULT WITH SOTA CHUNKING")
+        print("PROCESSING OBSIDIAN VAULT WITH SOTA CHUNKING")
         print("="*70)
         
         # Discover markdown files
@@ -367,8 +367,8 @@ class ObsidianChunker:
         print(f"Total Chunks: {processing_stats['total_chunks']}")
         print(f"Total Wikilinks: {processing_stats['total_wikilinks']}")
         print(f"Total Tags: {processing_stats['total_tags']}")
-        print(f"📈 Files with Wikilinks: {processing_stats['files_with_wikilinks']}")
-        print(f"📈 Files with Tags: {processing_stats['files_with_tags']}")
+        print(f"Files with Wikilinks: {processing_stats['files_with_wikilinks']}")
+        print(f"Files with Tags: {processing_stats['files_with_tags']}")
         print(f"Processing Errors: {processing_stats['processing_errors']}")
         print(f"Avg Chunks per File: {processing_stats['total_chunks']/processing_stats['total_files']:.1f}")
         print("="*70)
@@ -385,7 +385,7 @@ class ObsidianChunker:
         try:
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(chunks_data, f, indent=2, ensure_ascii=False)
-            print(f"💾 Chunks saved to: {output_file}")
+            print(f"Chunks saved to: {output_file}")
         except Exception as e:
             print(f"Error saving chunks: {e}")
 
@@ -394,7 +394,7 @@ def main():
     """Main function to run Obsidian chunking"""
     vault_path = r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro"
     
-    print("🚀 Obsidian Chunker - SOTA Implementation")
+    print("Obsidian Chunker - SOTA Implementation")
     print("="*50)
     
     # Initialize chunker
@@ -410,7 +410,7 @@ def main():
         # Show sample chunk
         if chunks_data['chunks']:
             sample_chunk = chunks_data['chunks'][0]
-            print(f"\n📝 Sample Chunk Preview:")
+            print(f"\nSample Chunk Preview:")
             print(f"Chunk ID: {sample_chunk['chunk_id']}")
             print(f"Source: {sample_chunk['metadata'].source_file}")
             print(f"Wikilinks: {sample_chunk['metadata'].wikilinks}")

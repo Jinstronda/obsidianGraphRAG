@@ -78,9 +78,9 @@ async def main():
         # Initialize system
         rag = SimpleRAGAnything(vault_path, working_dir)
         await rag.initialize()
-        
-        # Check if we need to process vault (skip if using existing database)
-        if hasattr(rag, 'rag_anything') and rag.rag_anything is not None:
+
+        # Process vault only if NOT using existing database
+        if not rag.using_existing_db:
             # Process vault with SOTA chunking
             print("\nProcessing Obsidian vault with SOTA chunking...")
             print("Creating 2K token chunks with wikilinks & metadata...")

@@ -1,0 +1,16 @@
+{
+  "chunk-7347422f9fc8cacef8d11016ad2cef77": {
+    "tokens": 730,
+    "content": "# Document: Note1.md\n**File Path**: C:\\Users\\joaop\\Documents\\Hobbies\\Obsidian Rag\\test_vault\\Note1.md\n**Chunk**: 1/1\n**Created**: 2025-09-30T11:19:36.680399\n**Modified**: 2025-09-30T11:19:36.684387\n\n## Connected Notes\n**Wikilinks**: [[Note2]]\n**Connections**: This note connects to 1 other notes\n\n## Topics\n**Tags**: #machinelearning, #ai\n\n## Content\n--- title: Machine Learning Basics tags: [ml, ai, learning] created: 2025-01-15 --- # Machine Learning Basics Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. ## Key Concepts - **Supervised Learning**: Training with labeled data - **Unsupervised Learning**: Finding patterns in unlabeled data - **Deep Learning**: Neural networks with multiple layers See also: [[Note2]] for more on neural networks. #ai #machinelearning\n\n# Document: Note2.md\n**File Path**: C:\\Users\\joaop\\Documents\\Hobbies\\Obsidian Rag\\test_vault\\Note2.md\n**Chunk**: 1/1\n**Created**: 2025-09-30T11:19:42.327711\n**Modified**: 2025-09-30T11:19:42.330722\n\n## Connected Notes\n**Wikilinks**: [[Note1]]\n**Connections**: This note connects to 1 other notes\n\n## Topics\n**Tags**: #neuralnetworks, #deeplearning\n\n## Content\n--- title: Neural Networks tags: [neural-networks, deep-learning] created: 2025-01-16 --- # Neural Networks Neural networks are computing systems inspired by biological neural networks. They consist of interconnected nodes (neurons) organized in layers. ## Architecture 1. **Input Layer**: Receives initial data 2. **Hidden Layers**: Process information 3. **Output Layer**: Produces final result Related concepts in [[Note1]] about machine learning fundamentals. #deeplearning #neuralnetworks\n\n# Document: Note3.md\n**File Path**: C:\\Users\\joaop\\Documents\\Hobbies\\Obsidian Rag\\test_vault\\Note3.md\n**Chunk**: 1/1\n**Created**: 2025-09-30T11:19:49.111231\n**Modified**: 2025-09-30T11:19:49.115533\n\n## Connected Notes\n**Wikilinks**: [[Note2]], [[Note1]]\n**Connections**: This note connects to 2 other notes\n\n## Topics\n**Tags**: #rag, #retrieval, #ai\n\n## Content\n--- title: RAG Systems tags: [rag, retrieval, ai] created: 2025-01-17 --- # Retrieval-Augmented Generation (RAG) RAG systems combine retrieval and generation capabilities to enhance AI responses with external knowledge. ## Components - **Retriever**: Finds relevant documents - **Generator**: Creates responses using retrieved context - **Knowledge Base**: Stores embedded information This builds on concepts from [[Note1]] and [[Note2]]. #rag #ai #retrieval",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-7c20f82cb11df1428840f855a9b1a4bc",
+    "file_path": "obsidian_vault.md",
+    "llm_cache_list": [
+      "default:extract:3c2e4710da31708bf5417f0fd4210ec5",
+      "default:extract:83b92cf79bfecc4b63fb50437b12e6ef"
+    ],
+    "create_time": 1759267684,
+    "update_time": 1759267716,
+    "_id": "chunk-7347422f9fc8cacef8d11016ad2cef77"
+  }
+}

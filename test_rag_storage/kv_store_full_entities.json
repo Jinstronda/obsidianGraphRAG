@@ -1,0 +1,26 @@
+{
+  "doc-7c20f82cb11df1428840f855a9b1a4bc": {
+    "entity_names": [
+      "Note3.md",
+      "Unsupervised Learning",
+      "Output Layer",
+      "Input Layer",
+      "Machine Learning Basics",
+      "Note2.md",
+      "Supervised Learning",
+      "Hidden Layers",
+      "Retriever",
+      "RAG Systems",
+      "Deep Learning",
+      "Retrieval-Augmented Generation (RAG)",
+      "Generator",
+      "Knowledge Base",
+      "Neural Networks",
+      "Note1.md"
+    ],
+    "count": 16,
+    "create_time": 1759267718,
+    "update_time": 1759267718,
+    "_id": "doc-7c20f82cb11df1428840f855a9b1a4bc"
+  }
+}
