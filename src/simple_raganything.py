@@ -5,6 +5,7 @@ Clean, minimal implementation for Obsidian vault processing
 
 import os
 import re
+import sys
 import asyncio
 import logging
 from typing import List, Dict, Any
@@ -101,13 +102,14 @@ class SimpleRAGAnything:
     Processes Obsidian vaults with multimodal support
     """
     
-    def __init__(self, vault_path: str, working_dir: str = "./rag_storage"):
+    def __init__(self, vault_path: str, working_dir: str = "./rag_storage", non_interactive: bool = False):
         """
         Initialize Simple RAG-Anything with Obsidian chunking
 
         Args:
             vault_path: Path to Obsidian vault
             working_dir: Working directory for RAG storage
+            non_interactive: If True, skip interactive prompts (for web server mode)
         """
         self.vault_path = vault_path
         self.working_dir = working_dir
@@ -115,6 +117,7 @@ class SimpleRAGAnything:
         self.embedding_model = None
         self.chunker = None
         self.using_existing_db = False  # Track if we're using an existing database
+        self.non_interactive = non_interactive  # Web server mode flag
 
         # Create working directory if it doesn't exist
         os.makedirs(working_dir, exist_ok=True)
@@ -434,15 +437,21 @@ class SimpleRAGAnything:
 
         # Check for existing database
         if self._detect_existing_database():
-            choice = self._handle_database_choice()
-
-            if choice == "2":  # Build new database
-                self._delete_existing_database()
-                print("\n✓ Starting fresh with new database")
-                self.using_existing_db = False
-            else:  # Use existing database
-                print("\n✓ Using existing database")
+            if self.non_interactive:
+                # In web server mode, always use existing database
+                print("\n✓ Existing database detected - using existing data (non-interactive mode)")
                 self.using_existing_db = True
+            else:
+                # Interactive mode - ask user
+                choice = self._handle_database_choice()
+
+                if choice == "2":  # Build new database
+                    self._delete_existing_database()
+                    print("\n✓ Starting fresh with new database")
+                    self.using_existing_db = False
+                else:  # Use existing database
+                    print("\n✓ Using existing database")
+                    self.using_existing_db = True
         else:
             self.using_existing_db = False
 

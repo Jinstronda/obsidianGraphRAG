@@ -15,6 +15,13 @@ pathlib
 frontmatter
 dataclasses
 
+# Web UI dependencies
+fastapi
+uvicorn[standard]
+websockets
+aiohttp
+psutil
+
 # Optional: For advanced document parsing
 # mineru  # Uncomment if needed for complex documents
 
