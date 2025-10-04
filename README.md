@@ -8,7 +8,9 @@ If you keep notes in Obsidian, you've probably forgotten half of what you wrote.
 
 The system reads your notes, builds a knowledge graph, and lets you query it like talking to someone who's read everything you've ever written. It finds connections you didn't know existed.
 
-It works locally. The embeddings and reranking run on your machine. Only the LLM calls go to Gemini's API, which is currently free.
+This solves what Matthew McConaughey wanted: an LLM trained only on your own data. Not the entire internet. Just your thoughts, your notes, your knowledge.
+
+It works locally. The embeddings and reranking run on your machine. Only the LLM calls go to Gemini's API, which is free.
 
 ## How It Works
 
@@ -147,14 +149,13 @@ Five new notes take 30 seconds to sync. Compare that to rebuilding 1000 notes, w
 
 ## Cost
 
-The initial build costs money because it processes every note:
+Everything is free.
 
-- 1,000 notes: about $5-10
-- 5,000 notes: about $20-40
+Gemini 2.5 Flash is free. The embeddings run locally. The reranking runs locally. No API costs.
 
-After that, queries are cheap. About $0.001 each. You can run thousands for a few dollars.
+Google's free tier has rate limits (15 requests per minute), but that's fine for personal use. If you hit limits, the system waits and retries.
 
-The embeddings and reranking are free because they run locally. Only the LLM calls cost money.
+For heavy usage, the paid tier costs about $0.001 per query. Still cheap.
 
 ## Requirements
 
