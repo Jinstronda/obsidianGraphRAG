@@ -11,6 +11,7 @@ import logging
 from typing import List, Dict, Any
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+from openai import OpenAI
 from tqdm import tqdm
 
 # RAG-Anything imports
@@ -42,6 +43,9 @@ except ImportError:
 
 # Load environment variables
 load_dotenv()
+
+# Initialize OpenAI client for query rewriting
+openai_client = OpenAI()
 
 
 class ProgressLoggingHandler(logging.Handler):
@@ -566,7 +570,7 @@ class SimpleRAGAnything:
         print("   • Embedding: EmbeddingGemma 308M (GPU)")
         print("   • LLM: Gemini 2.5 Flash (Entity Extraction + Queries)")
         print("   • Vision: Gemini 2.5 Flash (Multimodal)")
-        print("   • Context Window: 2000 tokens")
+        print("   • Chunk Size: 2000 tokens (LLM supports up to 1M tokens)")
     
     
     async def process_vault(self):
@@ -734,7 +738,90 @@ class SimpleRAGAnything:
         except Exception as e:
             print(f"Query failed: {e}")
             return f"Error: {str(e)}"
-    
+
+    def _rewrite_query(self, question: str) -> str:
+        """Rewrite natural language question to optimized search terms"""
+        try:
+            response = openai_client.responses.create(
+                model="gpt-5-mini",
+                input=f"Extract key search terms from: '{question}'. Remove question words (who/what/when/where/why/how), keep only core concepts and names. Return only the search terms, no explanation."
+            )
+            rewritten = response.output_text.strip()
+            print(f"[Query] '{question}' → '{rewritten}'")
+            return rewritten if rewritten else question
+        except Exception as e:
+            print(f"[Query] Rewrite failed: {e}")
+            return question
+
+    async def query_with_history(self, question: str, history: List[Dict[str, str]], mode: str = "hybrid") -> str:
+        """
+        Query with conversation history for multi-turn dialogue
+
+        Args:
+            question: Current question (used for retrieval)
+            history: Previous conversation turns (for LLM context only)
+                     Format: [{"role": "user"/"assistant", "content": "..."}]
+            mode: Query mode (hybrid, local, global, naive, mix)
+
+        Returns:
+            Generated answer with conversational awareness
+        """
+        if not self.rag_anything:
+            await self.initialize()
+
+        # Step 1: Rewrite query to extract key search terms
+        optimized_query = self._rewrite_query(question)
+        print(f"[Context] History: {len(history) // 2} exchanges")
+
+        try:
+            # Perform retrieval with optimized query
+            retrieval_result = await self.rag_anything.aquery(
+                optimized_query,  # Use optimized query for better retrieval
+                mode=mode,
+                enable_rerank=True
+            )
+
+            # Step 2: Format conversation history for LLM
+            history_text = ""
+            if history:
+                history_text = "Previous conversation:\n"
+                for msg in history[-6:]:  # Last 3 exchanges (6 messages)
+                    role = "User" if msg["role"] == "user" else "Assistant"
+                    history_text += f"{role}: {msg['content']}\n"
+                history_text += "\n"
+
+            # Step 3: Build prompt with history + retrieval results
+            # The LLM sees both history and retrieved chunks
+            prompt = f"""{history_text}Current question: {question}
+
+Retrieved information from your vault:
+{retrieval_result}
+
+Instructions:
+- Answer the current question using the retrieved information
+- Use conversation history to understand context when needed (e.g., "it" or "that" references)
+- Be conversational but concise
+- If the question refers to previous conversation, acknowledge that naturally
+
+Answer:"""
+
+            # Step 4: Call Gemini LLM with the combined prompt
+            from .gemini_llm import gemini_complete_if_cache
+
+            response = await gemini_complete_if_cache(
+                prompt=prompt,
+                system_prompt="You are a helpful Obsidian vault assistant. You remember previous conversation and answer naturally using information from the user's notes.",
+                history_messages=[],  # Don't duplicate history (already in prompt)
+                keyword_extraction=False
+            )
+
+            print(f"Query with history completed successfully!")
+            return response.strip()
+
+        except Exception as e:
+            print(f"Query with history failed: {e}")
+            return f"Error: {str(e)}"
+
     async def query_multimodal(self, question: str, multimodal_content: List[Dict] = None) -> str:
         """
         Query with multimodal content (images, tables, equations)
