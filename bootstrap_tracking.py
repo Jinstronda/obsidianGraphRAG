@@ -75,17 +75,17 @@ def bootstrap_tracking(vault_path: str, working_dir: str, cutoff_days: int = 1):
                         recent_count += 1
                         
                 except Exception as e:
-                    print(f"   ⚠️  Warning: Could not process {rel_path}: {e}")
+                    print(f"   [WARN] Could not process {rel_path}: {e}")
     
     # Save tracking data
     monitor._save_tracking_data()
     
     print("\n" + "="*70)
-    print("✅ BOOTSTRAP COMPLETE")
+    print("[OK] BOOTSTRAP COMPLETE")
     print("="*70)
-    print(f"   • Files marked as synced: {marked_count}")
-    print(f"   • Recent files (need sync): {recent_count}")
-    print(f"   • Total tracked: {len(monitor.file_registry)}")
+    print(f"   - Files marked as synced: {marked_count}")
+    print(f"   - Recent files (need sync): {recent_count}")
+    print(f"   - Total tracked: {len(monitor.file_registry)}")
     print(f"\nTracking file saved to: {tracking_file}")
     print("\n" + "="*70)
     print("NEXT STEPS:")
@@ -107,29 +107,29 @@ def main():
     print("\n" + "="*70)
     print("BOOTSTRAP TRACKING SETUP")
     print("="*70)
-    print(f"📁 Vault: {vault_path}")
-    print(f"💾 Storage: {working_dir}")
+    print(f"Vault: {vault_path}")
+    print(f"Storage: {working_dir}")
     
     # Check if vault exists
     if not os.path.exists(vault_path):
-        print(f"\n❌ Error: Vault not found at {vault_path}")
+        print(f"\n[ERROR] Vault not found at {vault_path}")
         return
     
     # Check if RAG database exists
     if not os.path.exists(os.path.join(working_dir, "graph_chunk_entity_relation.graphml")):
-        print(f"\n❌ Error: RAG database not found at {working_dir}")
+        print(f"\n[ERROR] RAG database not found at {working_dir}")
         print("Please build the database first: python run_obsidian_raganything.py")
         return
     
     # Check if tracking file already exists
     tracking_file = os.path.join(working_dir, "vault_tracking.json")
     if os.path.exists(tracking_file):
-        print(f"\n⚠️  Warning: Tracking file already exists at {tracking_file}")
+        print(f"\n[WARN] Tracking file already exists at {tracking_file}")
         response = input("Do you want to OVERWRITE it? (yes/no): ").strip().lower()
         if response != 'yes':
-            print("❌ Cancelled")
+            print("[CANCELLED]")
             return
-        print("\n✓ Overwriting existing tracking file...")
+        print("\n[OK] Overwriting existing tracking file...")
     
     # Ask for cutoff days
     print("\n" + "="*70)
@@ -148,31 +148,31 @@ def main():
         cutoff_days = int(days_input) if days_input else 1
         
         if cutoff_days < 0:
-            print("❌ Error: Days must be positive")
+            print("[ERROR] Days must be positive")
             return
-            
+
     except ValueError:
-        print("❌ Error: Invalid number")
+        print("[ERROR] Invalid number")
         return
     
     # Confirm
     cutoff_time = datetime.now() - timedelta(days=cutoff_days)
-    print(f"\n✓ Cutoff: {cutoff_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n[OK] Cutoff: {cutoff_time.strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"   Files modified BEFORE this date → Already synced")
     print(f"   Files modified AFTER this date → Will need syncing")
     
     response = input("\nProceed? (yes/no): ").strip().lower()
     if response != 'yes':
-        print("❌ Cancelled")
+        print("[CANCELLED]")
         return
     
     # Bootstrap
     try:
         bootstrap_tracking(vault_path, working_dir, cutoff_days)
-        print("\n✅ Success! You can now run incremental sync.")
-        
+        print("\n[OK] Success! You can now run incremental sync.")
+
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n[ERROR] {e}")
         import traceback
         traceback.print_exc()
 

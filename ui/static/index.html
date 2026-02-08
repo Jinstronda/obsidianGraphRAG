@@ -136,14 +136,31 @@
             color: var(--text-primary);
         }
 
-        .markdown-content ul,
+        .markdown-content ul {
+            margin-left: 1.75em;
+            margin-bottom: 1em;
+            list-style-type: disc;
+        }
+
         .markdown-content ol {
             margin-left: 1.75em;
             margin-bottom: 1em;
+            list-style-type: decimal;
         }
 
         .markdown-content li {
             margin-bottom: 0.5em;
+            display: list-item;
+        }
+
+        .markdown-content strong {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .markdown-content em {
+            font-style: italic;
+            color: #d1d5db;
         }
 
         .markdown-content a {
@@ -250,6 +267,147 @@
                 opacity: .5;
             }
         }
+
+        /* Agent steps styling */
+        .agent-steps {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border: 1px solid #4f46e5;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+
+        .agent-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .agent-step:last-child {
+            border-bottom: none;
+        }
+
+        .agent-step-number {
+            background: #4f46e5;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .agent-step-tool {
+            color: #a5b4fc;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .agent-step-query {
+            color: #94a3b8;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .agent-metadata {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: #a5b4fc;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .agent-metadata span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Collapsible thinking section */
+        .thinking-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #0f3460;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .thinking-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(15, 52, 96, 0.3);
+            transition: background 0.2s;
+        }
+
+        .thinking-header:hover {
+            background: rgba(15, 52, 96, 0.5);
+        }
+
+        .thinking-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .thinking-icon {
+            width: 18px;
+            height: 18px;
+            color: #64b5f6;
+            animation: pulse-thinking 2s infinite;
+        }
+
+        .thinking-icon.done {
+            animation: none;
+        }
+
+        @keyframes pulse-thinking {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .thinking-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #90caf9;
+        }
+
+        .thinking-toggle {
+            font-size: 11px;
+            color: #64b5f6;
+            transition: transform 0.3s;
+        }
+
+        .thinking-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .thinking-content {
+            padding: 12px 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #b0bec5;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(15, 52, 96, 0.5);
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .thinking-content.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="h-full flex flex-col">
@@ -266,6 +424,7 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
+            <span id="tokenDisplay" class="text-xs text-gray-400 hidden"></span>
             <div id="connectionStatus" class="flex items-center gap-2 text-sm">
                 <div class="w-2.5 h-2.5 rounded-full bg-green-500 status-pulse" id="statusDot"></div>
                 <span id="statusText" class="text-gray-300">Connected</span>
@@ -308,11 +467,12 @@
             </div>
 
             <div>
-                <h3 class="text-sm font-medium mb-3 text-gray-300">Reranking</h3>
-                <label class="flex items-center">
-                    <input type="checkbox" id="enableRerank" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-                    <span class="ml-2 text-sm text-gray-300">Enable BGE Reranker</span>
+                <h3 class="text-sm font-medium mb-3 text-gray-300">CRAG Agent</h3>
+                <label class="flex items-center mb-2">
+                    <input type="checkbox" id="enableAgentic" checked class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                    <span class="ml-2 text-sm text-gray-300">Enable CRAG Agent</span>
                 </label>
+                <p class="text-xs text-gray-500">Uses Gemini 3 Flash to iteratively search until it finds the best answer</p>
             </div>
 
             <div>
@@ -410,6 +570,9 @@
         let isProcessing = false;
         let chatHistory = [];
         let currentAssistantMessage = null;
+        let currentAgentSteps = [];
+        let currentAgentMetadata = null;
+        let currentThinking = [];  // Collects thinking/reasoning from agent
         let messageCount = 0;
 
         // ===== DOM ELEMENTS =====
@@ -426,7 +589,7 @@
         const exportChatBtn = document.getElementById('exportChatBtn');
         const messageCountEl = document.getElementById('messageCount');
         const queryModeSelect = document.getElementById('queryMode');
-        const enableRerankCheckbox = document.getElementById('enableRerank');
+        const enableAgenticCheckbox = document.getElementById('enableAgentic');
 
         // ===== INITIALIZATION =====
         marked.setOptions({
@@ -464,10 +627,44 @@
 
         // Save chat history to localStorage
         function saveChatHistory() {
+            const MAX_HISTORY_MESSAGES = 100;
+            const MAX_STORAGE_SIZE = 4 * 1024 * 1024;  // 4MB safety margin
+
             try {
-                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                // Prune history if too many messages
+                if (chatHistory.length > MAX_HISTORY_MESSAGES) {
+                    const removed = chatHistory.length - MAX_HISTORY_MESSAGES;
+                    chatHistory = chatHistory.slice(-MAX_HISTORY_MESSAGES);
+                    console.log(`[Storage] Pruned ${removed} old messages`);
+                }
+
+                const serialized = JSON.stringify(chatHistory);
+
+                // Check size before saving
+                if (serialized.length > MAX_STORAGE_SIZE) {
+                    // Emergency: keep only last 50 messages
+                    chatHistory = chatHistory.slice(-50);
+                    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                    showToast('Chat history trimmed to prevent storage overflow', 'warning');
+                    console.warn('[Storage] Emergency trim: history too large');
+                } else {
+                    localStorage.setItem('chatHistory', serialized);
+                }
             } catch (err) {
-                console.error('Failed to save chat history:', err);
+                if (err.name === 'QuotaExceededError') {
+                    // localStorage full - clear and save minimal history
+                    console.error('[Storage] Quota exceeded, clearing old data');
+                    chatHistory = chatHistory.slice(-20);
+                    try {
+                        localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                        showToast('Storage full - cleared old messages', 'warning');
+                    } catch (e) {
+                        localStorage.clear();
+                        showToast('Storage error - history cleared', 'error');
+                    }
+                } else {
+                    console.error('Failed to save chat history:', err);
+                }
             }
         }
 
@@ -477,6 +674,10 @@
         }
 
         // ===== WEBSOCKET CONNECTION =====
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 10;
+        const BASE_RECONNECT_DELAY = 1000;
+
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws/chat`;
@@ -485,8 +686,13 @@
 
             ws.onopen = () => {
                 console.log('WebSocket connected');
+                reconnectAttempts = 0;  // Reset on successful connection
                 updateConnectionStatus(true);
+                updateInputState();
                 checkSystemHealth();
+                if (reconnectAttempts > 0) {
+                    showToast('Reconnected successfully!', 'success');
+                }
             };
 
             ws.onmessage = (event) => {
@@ -494,10 +700,29 @@
                 handleWebSocketMessage(data);
             };
 
-            ws.onclose = () => {
-                console.log('WebSocket disconnected');
+            ws.onclose = (event) => {
+                console.log('WebSocket disconnected', event.code, event.reason);
                 updateConnectionStatus(false);
-                setTimeout(connectWebSocket, 3000);
+
+                // Show user-friendly message on unexpected disconnect
+                if (!event.wasClean && reconnectAttempts === 0) {
+                    showToast('Connection lost. Reconnecting...', 'warning');
+                }
+
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    // Exponential backoff: 1s, 2s, 4s, 8s... max 30s
+                    const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts), 30000);
+                    reconnectAttempts++;
+
+                    statusText.textContent = `Reconnecting (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`;
+                    statusText.className = 'text-yellow-400';
+
+                    setTimeout(connectWebSocket, delay);
+                } else {
+                    showToast('Unable to reconnect. Please refresh the page.', 'error');
+                    statusText.textContent = 'Connection failed';
+                    statusText.className = 'text-red-400';
+                }
             };
 
             ws.onerror = (error) => {
@@ -522,6 +747,35 @@
         // ===== MESSAGE HANDLING =====
         function handleWebSocketMessage(data) {
             switch (data.type) {
+                case 'thinking':
+                    // Agent thinking/reasoning - collect for collapsible display
+                    currentThinking.push(data.content);
+                    updateThinkingDisplay();
+                    break;
+
+                case 'step':
+                    // Agent reasoning step
+                    currentAgentSteps.push(data.content);
+                    updateAgentStepsDisplay();
+                    break;
+
+                case 'token_update':
+                    // Token usage update from agent
+                    updateTokenDisplay(data.content);
+                    break;
+
+                case 'context_compacted':
+                    // Context was compacted to save tokens
+                    const count = data.content.compaction_count;
+                    showToast(`Context compacted (round ${count}) - conversation preserved`, 'info');
+                    break;
+
+                case 'metadata':
+                    // Agent answer metadata (confidence, sources)
+                    currentAgentMetadata = data.content;
+                    updateAgentMetadataDisplay();
+                    break;
+
                 case 'chunk':
                     if (currentAssistantMessage) {
                         currentAssistantMessage.content += data.content;
@@ -531,28 +785,195 @@
 
                 case 'done':
                     isProcessing = false;
+                    // Finalize thinking section (stop animation, collapse by default)
+                    finalizeThinkingDisplay();
                     if (currentAssistantMessage) {
-                        // Save to history
-                        chatHistory.push({
+                        // Save to history (include steps if agentic)
+                        const historyEntry = {
                             role: 'assistant',
                             content: currentAssistantMessage.content
-                        });
+                        };
+                        if (currentAgentSteps.length > 0) {
+                            historyEntry.agentSteps = currentAgentSteps;
+                            historyEntry.agentMetadata = currentAgentMetadata;
+                        }
+                        if (currentThinking.length > 0) {
+                            historyEntry.thinking = currentThinking;
+                        }
+                        chatHistory.push(historyEntry);
                         saveChatHistory();
                     }
+                    // Reset agent state
                     currentAssistantMessage = null;
+                    currentAgentSteps = [];
+                    currentAgentMetadata = null;
+                    currentThinking = [];
                     updateInputState();
                     break;
 
                 case 'error':
                     if (currentAssistantMessage) {
-                        currentAssistantMessage.element.parentElement.remove();
+                        currentAssistantMessage.element.parentElement.parentElement.remove();
                     }
-                    addMessage('assistant', `❌ Error: ${data.content}`);
+                    addMessage('assistant', `Error: ${data.content}`);
                     showToast('Error: ' + data.content, 'error');
                     isProcessing = false;
                     currentAssistantMessage = null;
+                    currentAgentSteps = [];
+                    currentAgentMetadata = null;
+                    currentThinking = [];
                     updateInputState();
                     break;
+            }
+        }
+
+        // Update agent steps display in UI
+        function updateAgentStepsDisplay() {
+            if (!currentAssistantMessage || currentAgentSteps.length === 0) return;
+
+            // Find or create steps container
+            let stepsContainer = currentAssistantMessage.element.parentElement.querySelector('.agent-steps');
+            if (!stepsContainer) {
+                stepsContainer = document.createElement('div');
+                stepsContainer.className = 'agent-steps';
+                stepsContainer.innerHTML = '<div class="text-xs text-indigo-300 mb-2 font-medium">Agent Reasoning</div><div class="steps-list"></div>';
+                currentAssistantMessage.element.parentElement.insertBefore(stepsContainer, currentAssistantMessage.element);
+            }
+
+            // Update steps list
+            const stepsList = stepsContainer.querySelector('.steps-list');
+            stepsList.innerHTML = currentAgentSteps.map(step => `
+                <div class="agent-step">
+                    <div class="agent-step-number">${step.step}</div>
+                    <div>
+                        <div class="agent-step-tool">${step.tool}</div>
+                        <div class="agent-step-query">"${step.args.query || ''}"</div>
+                    </div>
+                </div>
+            `).join('');
+
+            scrollToBottom();
+        }
+
+        // Update metadata display
+        function updateAgentMetadataDisplay() {
+            if (!currentAssistantMessage || !currentAgentMetadata) return;
+
+            const stepsContainer = currentAssistantMessage.element.parentElement.querySelector('.agent-steps');
+            if (!stepsContainer) return;
+
+            // Add or update metadata
+            let metadataDiv = stepsContainer.querySelector('.agent-metadata');
+            if (!metadataDiv) {
+                metadataDiv = document.createElement('div');
+                metadataDiv.className = 'agent-metadata';
+                stepsContainer.appendChild(metadataDiv);
+            }
+
+            const confidenceIcon = currentAgentMetadata.confidence === 'high' ? '🟢' :
+                                   currentAgentMetadata.confidence === 'medium' ? '🟡' : '🔴';
+
+            metadataDiv.innerHTML = `
+                <span>${confidenceIcon} Confidence: ${currentAgentMetadata.confidence}</span>
+                <span>📚 Sources: ${currentAgentMetadata.sources_used || 0}</span>
+            `;
+        }
+
+        // Update thinking display (collapsible section)
+        function updateThinkingDisplay() {
+            if (!currentAssistantMessage || currentThinking.length === 0) return;
+
+            // Find or create thinking section
+            let thinkingSection = currentAssistantMessage.element.parentElement.querySelector('.thinking-section');
+            if (!thinkingSection) {
+                thinkingSection = document.createElement('div');
+                thinkingSection.className = 'thinking-section';
+                thinkingSection.innerHTML = `
+                    <div class="thinking-header" onclick="toggleThinking(this)">
+                        <div class="thinking-header-left">
+                            <svg class="thinking-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                            <span class="thinking-title">Agent Thinking...</span>
+                        </div>
+                        <span class="thinking-toggle">▼</span>
+                    </div>
+                    <div class="thinking-content"></div>
+                `;
+                // Insert before agent steps or message content
+                const stepsContainer = currentAssistantMessage.element.parentElement.querySelector('.agent-steps');
+                if (stepsContainer) {
+                    currentAssistantMessage.element.parentElement.insertBefore(thinkingSection, stepsContainer);
+                } else {
+                    currentAssistantMessage.element.parentElement.insertBefore(thinkingSection, currentAssistantMessage.element);
+                }
+            }
+
+            // Update thinking content
+            const thinkingContent = thinkingSection.querySelector('.thinking-content');
+            thinkingContent.textContent = currentThinking.join('\n\n');
+
+            scrollToBottom();
+        }
+
+        // Finalize thinking display when done
+        function finalizeThinkingDisplay() {
+            if (!currentAssistantMessage) return;
+
+            const thinkingSection = currentAssistantMessage.element.parentElement.querySelector('.thinking-section');
+            if (thinkingSection) {
+                // Stop animation
+                const icon = thinkingSection.querySelector('.thinking-icon');
+                if (icon) icon.classList.add('done');
+
+                // Update title
+                const title = thinkingSection.querySelector('.thinking-title');
+                if (title) title.textContent = 'Agent Thinking (click to expand)';
+
+                // Collapse by default
+                const content = thinkingSection.querySelector('.thinking-content');
+                const toggle = thinkingSection.querySelector('.thinking-toggle');
+                if (content) content.classList.add('hidden');
+                if (toggle) toggle.classList.add('collapsed');
+            }
+        }
+
+        // Toggle thinking section visibility
+        function toggleThinking(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.thinking-content');
+            const toggle = section.querySelector('.thinking-toggle');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                toggle.classList.remove('collapsed');
+            } else {
+                content.classList.add('hidden');
+                toggle.classList.add('collapsed');
+            }
+        }
+
+        // Update token usage display
+        function updateTokenDisplay(tokenInfo) {
+            const tokenDisplay = document.getElementById('tokenDisplay');
+            if (!tokenDisplay) return;
+
+            const tokens = tokenInfo.tokens;
+            const percent = tokenInfo.percent;
+
+            // Show the element
+            tokenDisplay.classList.remove('hidden');
+
+            // Show token count and percentage
+            tokenDisplay.textContent = `${(tokens / 1000).toFixed(0)}K tokens (${percent.toFixed(0)}%)`;
+
+            // Update color based on usage
+            if (percent > 90) {
+                tokenDisplay.className = 'text-xs text-red-400';
+            } else if (percent > 70) {
+                tokenDisplay.className = 'text-xs text-yellow-400';
+            } else {
+                tokenDisplay.className = 'text-xs text-gray-400';
             }
         }
 
@@ -615,11 +1036,25 @@
             return { element: contentDiv, content: '' };
         }
 
+        // Preprocess markdown to ensure proper line breaks
+        function preprocessMarkdown(text) {
+            return text
+                // Ensure headers have newlines before them
+                .replace(/([^\n])(#{1,6}\s)/g, '$1\n\n$2')
+                // Ensure list items starting with * have newlines
+                .replace(/([^\n\*])\s*\*\s+\*\*/g, '$1\n\n* **')
+                // Ensure numbered lists have newlines
+                .replace(/([^\n])(\d+\.)\s/g, '$1\n\n$2 ')
+                // Clean up excessive newlines
+                .replace(/\n{3,}/g, '\n\n');
+        }
+
         // Update message content with markdown rendering
         function updateMessageContent(element, content) {
-            const renderedHTML = marked.parse(content);
+            const processed = preprocessMarkdown(content);
+            const renderedHTML = marked.parse(processed);
             element.innerHTML = `<div class="markdown-content">${renderedHTML}</div>`;
-            
+
             // Apply syntax highlighting to code blocks
             element.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
@@ -650,13 +1085,26 @@
             // Add assistant typing indicator
             currentAssistantMessage = addMessage('assistant', '', true);
 
-            // Send to server with settings
+            // Build conversation history for backend (just role and content)
+            const historyForBackend = chatHistory.map(msg => ({
+                role: msg.role,
+                content: msg.content,
+                is_summary: msg.is_summary || false
+            }));
+
+            // Send to server with settings and full history
             const queryData = {
                 message: message,
                 mode: queryModeSelect.value,
-                enable_rerank: enableRerankCheckbox.checked
+                agentic: enableAgenticCheckbox.checked,
+                history: historyForBackend
             };
             ws.send(JSON.stringify(queryData));
+
+            // Reset agent state for new query
+            currentAgentSteps = [];
+            currentAgentMetadata = null;
+            currentThinking = [];
 
             isProcessing = true;
             updateInputState();

@@ -9,39 +9,48 @@ import asyncio
 import json
 from pathlib import Path
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 # Add parent directory to path to import src modules
-sys.path.insert(0, str(Path(__file__).parent.parent))
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.simple_raganything import SimpleRAGAnything
+from src.agentic_rag import AgenticRAG
 
 # Initialize FastAPI app
 app = FastAPI(title="Obsidian RAG Chat")
 
-# Global RAG instance
+# Global RAG instances
 rag_system = None
+agentic_rag = None
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="ui/static"), name="static")
+# Lock to prevent concurrent sync and query operations
+# This prevents data corruption when sync runs while queries are in progress
+rag_lock = asyncio.Lock()
+
+# Resolve static files path (absolute)
+STATIC_DIR = (PROJECT_ROOT / "ui" / "static").resolve()
+print(f"[DEBUG] STATIC_DIR resolved to: {STATIC_DIR}")
+print(f"[DEBUG] index.html exists: {(STATIC_DIR / 'index.html').exists()}")
 
 
 @app.on_event("startup")
 async def startup_event():
     """Initialize RAG system on server startup"""
-    global rag_system
+    global rag_system, agentic_rag
 
     print("=" * 60)
-    print("🚀 Starting Obsidian RAG Chat UI")
+    print("Starting Obsidian RAG Chat UI")
     print("=" * 60)
 
     # Configuration from environment or defaults
     vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
     working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
 
-    print(f"📁 Vault: {vault_path}")
-    print(f"💾 Storage: {working_dir}")
+    print(f"Vault: {vault_path}")
+    print(f"Storage: {working_dir}")
     print()
 
     # Initialize RAG system (non-interactive mode for web server)
@@ -52,16 +61,20 @@ async def startup_event():
             non_interactive=True  # Skip interactive prompts in web server mode
         )
 
-        print("🔄 Initializing RAG system...")
+        print("Initializing RAG system...")
         await rag_system.initialize()
 
+        # Initialize AgenticRAG wrapper for CRAG mode
+        agentic_rag = AgenticRAG(rag_system)
+        print("AgenticRAG (CRAG) initialized with Gemini 3 Flash")
+
         print()
-        print("✅ RAG system ready!")
-        print("🌐 Server running at: http://localhost:8000")
+        print("RAG system ready!")
+        print("Server running at: http://localhost:8000")
         print("=" * 60)
 
     except Exception as e:
-        print(f"❌ Failed to initialize RAG system: {e}")
+        print(f"Failed to initialize RAG system: {e}")
         print("=" * 60)
         raise
 
@@ -69,9 +82,12 @@ async def startup_event():
 @app.get("/")
 async def get_chat_page():
     """Serve the main chat interface"""
-    with open("ui/static/index.html", "r", encoding="utf-8") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content)
+    html_path = STATIC_DIR / "index.html"
+    print(f"[DEBUG] Serving index.html from: {html_path}")
+    if not html_path.exists():
+        print(f"[ERROR] index.html NOT FOUND at {html_path}")
+        return HTMLResponse(content=f"File not found: {html_path}", status_code=404)
+    return FileResponse(html_path, media_type="text/html")
 
 
 @app.websocket("/ws/chat")
@@ -80,8 +96,9 @@ async def websocket_chat(websocket: WebSocket):
     WebSocket endpoint for real-time chat with streaming responses
 
     Protocol:
-    - Client sends: {"message": "user question"}
+    - Client sends: {"message": "user question", "agentic": false}
     - Server streams: {"type": "chunk", "content": "..."} for each chunk
+    - Server sends: {"type": "step", "content": {...}} for agentic mode steps
     - Server sends: {"type": "done"} when complete
     - Server sends: {"type": "error", "content": "..."} on error
     """
@@ -94,7 +111,8 @@ async def websocket_chat(websocket: WebSocket):
             message_data = json.loads(data)
             user_message = message_data.get("message", "").strip()
             query_mode = message_data.get("mode", "hybrid")
-            enable_rerank = message_data.get("enable_rerank", True)
+            enable_agentic = message_data.get("agentic", False)
+            conversation_history = message_data.get("history", [])
 
             if not user_message:
                 await websocket.send_json({
@@ -103,39 +121,104 @@ async def websocket_chat(websocket: WebSocket):
                 })
                 continue
 
-            # Log query to terminal (not sent to UI)
-            print(f"\n💬 User: {user_message}")
-            print(f"🎯 Mode: {query_mode}, Rerank: {enable_rerank}")
-            print("🤖 Assistant: ", end="", flush=True)
+            # Log query to terminal
+            print(f"\nUser: {user_message}")
+            print(f"Mode: {query_mode}, Agentic: {enable_agentic}, History: {len(conversation_history)} msgs")
 
             try:
-                # Query RAG system with settings
-                response = await rag_system.query(user_message, mode=query_mode)
+                # Acquire lock to prevent queries during sync
+                async with rag_lock:
+                    if enable_agentic and agentic_rag:
+                        # Use CRAG agentic mode with conversation history
+                        print("Using CRAG Agent with Gemini 3 Flash...")
+                        async for event in agentic_rag.query_streaming(user_message, history=conversation_history):
+                            event_type = event.get("type")
 
-                # Log full response to terminal
-                print(response)
-                print()
+                            if event_type == "step":
+                                # Send agent step to UI
+                                await websocket.send_json({
+                                    "type": "step",
+                                    "content": event["content"]
+                                })
+                                step = event["content"]
+                                print(f"  [{step['step']}] {step['tool']}({step['args']})")
 
-                # Stream response to client word by word
-                words = response.split()
-                for i, word in enumerate(words):
-                    # Add space between words (except first word)
-                    chunk = word if i == 0 else f" {word}"
+                            elif event_type == "token_update":
+                                # Send token usage update to UI
+                                await websocket.send_json({
+                                    "type": "token_update",
+                                    "content": event["content"]
+                                })
+                                tokens = event["content"]["tokens"]
+                                percent = event["content"]["percent"]
+                                print(f"  [Tokens] {tokens:,} ({percent:.1f}% of limit)")
 
-                    await websocket.send_json({
-                        "type": "chunk",
-                        "content": chunk
-                    })
+                            elif event_type == "context_compacted":
+                                # Notify UI that context was compacted
+                                await websocket.send_json({
+                                    "type": "context_compacted",
+                                    "content": event["content"]
+                                })
+                                count = event["content"]["compaction_count"]
+                                print(f"  [Context] Compacted (#{count})")
 
-                    # Small delay for typing effect
-                    await asyncio.sleep(0.03)
+                            elif event_type == "thinking":
+                                # Optional: send thinking to UI
+                                pass
 
-                # Send completion signal
-                await websocket.send_json({"type": "done"})
+                            elif event_type == "answer":
+                                # Stream the final answer word by word
+                                answer = event["content"]["answer"]
+                                confidence = event["content"]["confidence"]
+                                sources = event["content"].get("sources_used", 0)
+                                print(f"Answer (confidence: {confidence}, sources: {sources}):")
+                                print(answer[:200] + "..." if len(answer) > 200 else answer)
+
+                                # Stream answer to client
+                                words = answer.split()
+                                for i, word in enumerate(words):
+                                    chunk = word if i == 0 else f" {word}"
+                                    await websocket.send_json({
+                                        "type": "chunk",
+                                        "content": chunk
+                                    })
+                                    await asyncio.sleep(0.03)
+
+                                # Send metadata
+                                await websocket.send_json({
+                                    "type": "metadata",
+                                    "content": {
+                                        "confidence": confidence,
+                                        "sources_used": sources
+                                    }
+                                })
+
+                            elif event_type == "done":
+                                await websocket.send_json({"type": "done"})
+
+                    else:
+                        # Standard RAG query
+                        print("Using standard RAG...")
+                        response = await rag_system.query(user_message, mode=query_mode)
+                        print(response[:200] + "..." if len(response) > 200 else response)
+
+                        # Stream response to client word by word
+                        words = response.split()
+                        for i, word in enumerate(words):
+                            chunk = word if i == 0 else f" {word}"
+                            await websocket.send_json({
+                                "type": "chunk",
+                                "content": chunk
+                            })
+                            await asyncio.sleep(0.03)
+
+                        await websocket.send_json({"type": "done"})
 
             except Exception as e:
                 error_msg = f"Query failed: {str(e)}"
-                print(f"❌ {error_msg}")
+                print(f"Error: {error_msg}")
+                import traceback
+                traceback.print_exc()
 
                 await websocket.send_json({
                     "type": "error",
@@ -143,9 +226,9 @@ async def websocket_chat(websocket: WebSocket):
                 })
 
     except WebSocketDisconnect:
-        print("🔌 Client disconnected")
+        print("Client disconnected")
     except Exception as e:
-        print(f"❌ WebSocket error: {e}")
+        print(f"WebSocket error: {e}")
 
 
 @app.get("/health")
@@ -174,15 +257,17 @@ async def get_config():
     """Get current RAG system configuration"""
     if not rag_system:
         return {"error": "RAG system not initialized"}
-    
+
     return {
         "vault_path": rag_system.vault_path,
         "working_dir": rag_system.working_dir,
         "using_existing_db": rag_system.using_existing_db,
         "non_interactive": rag_system.non_interactive,
+        "agentic_available": agentic_rag is not None,
         "models": {
             "embedding": "EmbeddingGemma 308M",
-            "llm": "Gemini 2.5 Flash",
+            "llm": "Gemini 3 Flash",
+            "agentic_llm": "Gemini 3 Flash",
             "reranker": "BGE Reranker v2-m3"
         }
     }
@@ -193,37 +278,42 @@ async def sync_vault():
     """Incrementally sync vault changes"""
     if not rag_system:
         return {"error": "RAG system not initialized"}
-    
-    try:
-        # Import here to avoid circular dependencies
-        from src.vault_monitor import VaultMonitor, IncrementalVaultUpdater
-        
-        # Initialize monitor
-        tracking_file = os.path.join(rag_system.working_dir, "vault_tracking.json")
-        monitor = VaultMonitor(rag_system.vault_path, tracking_file)
-        
-        # Scan for changes
-        new_files, modified_files, deleted_files = monitor.scan_vault()
-        
-        # Create updater and sync
-        updater = IncrementalVaultUpdater(rag_system, monitor)
-        await updater.sync_vault()
-        
-        return {
-            "status": "success",
-            "changes": {
-                "new": len(new_files),
-                "modified": len(modified_files),
-                "deleted": len(deleted_files)
-            },
-            "total_tracked": len(monitor.file_registry)
-        }
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e)
-        }
+
+    # Acquire lock to prevent sync during queries (and prevent concurrent syncs)
+    async with rag_lock:
+        try:
+            # Import here to avoid circular dependencies
+            from src.vault_monitor import VaultMonitor, IncrementalVaultUpdater
+
+            # Initialize monitor
+            tracking_file = os.path.join(rag_system.working_dir, "vault_tracking.json")
+            monitor = VaultMonitor(rag_system.vault_path, tracking_file)
+
+            # Scan for changes in a thread so the event loop isn't blocked
+            # (os.walk + MD5 hashing is I/O-heavy)
+            new_files, modified_files, deleted_files = await asyncio.to_thread(
+                monitor.scan_vault
+            )
+
+            # Create updater and sync
+            updater = IncrementalVaultUpdater(rag_system, monitor)
+            await updater.sync_vault()
+
+            return {
+                "status": "success",
+                "changes": {
+                    "new": len(new_files),
+                    "modified": len(modified_files),
+                    "deleted": len(deleted_files)
+                },
+                "total_tracked": len(monitor.file_registry)
+            }
+
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": str(e)
+            }
 
 
 @app.get("/api/vault/status")
@@ -234,12 +324,14 @@ async def vault_status():
     
     try:
         from src.vault_monitor import VaultMonitor
-        
+
         tracking_file = os.path.join(rag_system.working_dir, "vault_tracking.json")
         monitor = VaultMonitor(rag_system.vault_path, tracking_file)
-        
-        # Quick scan
-        new_files, modified_files, deleted_files = monitor.scan_vault()
+
+        # Scan in thread so it doesn't block the event loop
+        new_files, modified_files, deleted_files = await asyncio.to_thread(
+            monitor.scan_vault
+        )
         
         return {
             "status": "success",
@@ -258,6 +350,10 @@ async def vault_status():
             "status": "error",
             "error": str(e)
         }
+
+
+# Mount static files LAST - after all routes to avoid catch-all interference
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 if __name__ == "__main__":

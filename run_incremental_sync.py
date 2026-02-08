@@ -28,18 +28,18 @@ async def main():
     vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
     working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
     
-    print(f"\n📁 Vault: {vault_path}")
-    print(f"💾 Storage: {working_dir}")
+    print(f"\nVault: {vault_path}")
+    print(f"Storage: {working_dir}")
     
     # Check if vault exists
     if not os.path.exists(vault_path):
-        print(f"\n❌ Error: Vault not found at {vault_path}")
+        print(f"\n[ERROR] Vault not found at {vault_path}")
         print("Please set OBSIDIAN_VAULT_PATH environment variable")
         return
-    
+
     # Check if RAG database exists
     if not os.path.exists(os.path.join(working_dir, "graph_chunk_entity_relation.graphml")):
-        print(f"\n❌ Error: RAG database not found at {working_dir}")
+        print(f"\n[ERROR] RAG database not found at {working_dir}")
         print("\nYou need to build the initial database first:")
         print("   python run_obsidian_raganything.py")
         print("\nThen you can use incremental sync for future updates")
@@ -75,7 +75,7 @@ async def main():
         await updater.sync_vault()
         
         print("\n" + "="*70)
-        print("✅ SYNC COMPLETE - DATABASE UP TO DATE")
+        print("[OK] SYNC COMPLETE - DATABASE UP TO DATE")
         print("="*70)
         
         # Optional: Test query
@@ -83,14 +83,14 @@ async def main():
         if user_choice == 'y':
             question = input("Enter your question: ").strip()
             if question:
-                print(f"\n🔍 Querying: {question}")
+                print(f"\nQuerying: {question}")
                 result = await rag.query(question, mode="hybrid")
-                print(f"\n📝 Answer:\n{result}")
+                print(f"\nAnswer:\n{result}")
         
     except KeyboardInterrupt:
-        print("\n\n⚠️  Sync interrupted by user")
+        print("\n\n[WARN] Sync interrupted by user")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n[ERROR] {e}")
         import traceback
         traceback.print_exc()
         return

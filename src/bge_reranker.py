@@ -20,47 +20,67 @@ def get_reranker_model():
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f"Loading BGE Reranker v2-m3 on {device.upper()}...")
         _reranker_model = CrossEncoder('BAAI/bge-reranker-v2-m3', device=device, max_length=8192)
-        print(f"   ✓ BGE Reranker v2-m3 loaded successfully (1.06GB VRAM)")
+        print(f"   [OK] BGE Reranker v2-m3 loaded successfully (1.06GB VRAM)")
 
     return _reranker_model
 
 
 def bge_rerank(query: str, documents: List[str], top_k: int = None) -> List[Tuple[str, float]]:
     """
-    Rerank documents using BGE reranker
-    
+    Rerank documents using BGE reranker with graceful fallback on errors.
+
     Args:
         query: Search query
         documents: List of document texts to rerank
         top_k: Number of top documents to return (None = return all)
-        
+
     Returns:
         List of (document, score) tuples, sorted by relevance
     """
     if not documents:
         return []
-    
-    # Get reranker model
-    model = get_reranker_model()
-    
-    # Create query-document pairs
-    pairs = [[query, doc] for doc in documents]
-    
-    # Get relevance scores
-    scores = model.predict(pairs, show_progress_bar=False)
-    
-    # Combine documents with scores and sort
-    doc_scores = list(zip(documents, scores))
-    doc_scores.sort(key=lambda x: x[1], reverse=True)
-    
-    # Return top_k if specified
-    if top_k is not None:
-        doc_scores = doc_scores[:top_k]
-    
-    return doc_scores
+
+    try:
+        # Get reranker model
+        model = get_reranker_model()
+
+        # Create query-document pairs
+        pairs = [[query, doc] for doc in documents]
+
+        # Get relevance scores
+        scores = model.predict(pairs, show_progress_bar=False)
+
+        # Combine documents with scores and sort
+        doc_scores = list(zip(documents, scores))
+        doc_scores.sort(key=lambda x: x[1], reverse=True)
+
+        # Return top_k if specified
+        if top_k is not None:
+            doc_scores = doc_scores[:top_k]
+
+        return doc_scores
+
+    except Exception as e:
+        error_str = str(e).lower()
+
+        if "out of memory" in error_str or "cuda" in error_str:
+            print(f"[WARN] GPU error in reranker: {e}")
+            print(f"[WARN] Falling back to unranked results")
+        else:
+            print(f"[ERROR] Reranker failed: {e}")
+            print(f"[WARN] Returning documents without reranking")
+
+        # Fallback: return documents with neutral scores (preserves original order)
+        doc_scores = [(doc, 0.5) for doc in documents]
+
+        if top_k is not None:
+            doc_scores = doc_scores[:top_k]
+
+        return doc_scores
 
 
-# For LightRAG compatibility - async version
+# For LightRAG compatibility - async version (properly non-blocking)
 async def bge_rerank_async(query: str, documents: List[str], top_k: int = None) -> List[Tuple[str, float]]:
-    """Async wrapper for BGE reranking"""
-    return bge_rerank(query, documents, top_k)
+    """Async wrapper for BGE reranking - runs in thread to avoid blocking event loop"""
+    import asyncio
+    return await asyncio.to_thread(bge_rerank, query, documents, top_k)

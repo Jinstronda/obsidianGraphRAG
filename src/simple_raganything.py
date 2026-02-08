@@ -259,27 +259,30 @@ class SimpleRAGAnything:
 
             if device == 'cuda':
                 print(f"\n[1/3] GPU Detection")
-                print(f"   ✓ GPU Detected: {torch.cuda.get_device_name(0)}")
-                print(f"   ✓ GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
+                print(f"   [OK] GPU Detected: {torch.cuda.get_device_name(0)}")
+                print(f"   [OK] GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
             else:
                 print(f"\n[1/3] GPU Detection")
-                print(f"   ✗ No GPU detected, using CPU")
+                print(f"   [X] No GPU detected, using CPU")
 
             # Load model on GPU if available
             print(f"\n[2/3] Loading EmbeddingGemma 308M...")
             self.embedding_model = SentenceTransformer("google/embeddinggemma-300m", device=device)
-            print(f"   ✓ Loaded on {device.upper()}")
-            print(f"   ✓ Dimensions: 768 (truncatable to 512/256/128)")
-            print(f"   ✓ Languages: 100+ supported")
-            print(f"   ✓ Memory: <200MB with quantization")
+            print(f"   [OK] Loaded on {device.upper()}")
+            print(f"   [OK] Dimensions: 768 (truncatable to 512/256/128)")
+            print(f"   [OK] Languages: 100+ supported")
+            print(f"   [OK] Memory: <200MB with quantization")
             
             # Create a standalone async embedding function for RAG-Anything
             def create_embedding_function(model):
                 async def embedding_function(texts):
                     # Return embeddings in the exact same format as openai_embed()
                     # openai_embed returns a list of embedding vectors
-                    # Run in executor to avoid blocking async loop
-                    embeddings = model.encode(texts, convert_to_numpy=True)
+                    # Run in executor to avoid blocking async loop (CRITICAL for UI responsiveness)
+                    import asyncio
+                    embeddings = await asyncio.to_thread(
+                        model.encode, texts, convert_to_numpy=True
+                    )
                     return embeddings.tolist()
                 return embedding_function
 
@@ -290,7 +293,7 @@ class SimpleRAGAnything:
                 max_token_size=8192,
                 func=create_embedding_function(self.embedding_model)
             )
-            print("   ✓ EmbeddingFunc wrapper created")
+            print("   [OK] EmbeddingFunc wrapper created")
             
         except Exception as e:
             print(f"Error loading EmbeddingGemma: {e}")
@@ -319,7 +322,7 @@ class SimpleRAGAnything:
     
     async def _llm_function(self, prompt: str, system_prompt: str = None, history_messages=[], **kwargs) -> str:
         """
-        LLM function using Gemini 2.5 Flash for entity extraction
+        LLM function using Gemini 3 Flash for entity extraction
         FIXED: Added debug logging to diagnose prompt issues
 
         Args:
@@ -347,18 +350,14 @@ class SimpleRAGAnything:
         is_extraction = "extract entities" in prompt.lower() or "extract relations" in prompt.lower()
 
         if is_extraction:
-            # Use Gemini 2.5 Flash for entity extraction
-            # Fast: 1,000 RPM, 1M TPM (paid tier)
-            # Cost: ~$7.65 for 6119 chunks (~12 minutes)
+            # Use Gemini 3 Flash for entity extraction
+            # 1M token context, thinking capabilities
             try:
-                vertex_api_key = os.getenv("VERTEX_AI_API_KEY")
-
                 result = await gemini_complete_if_cache(
-                    model="gemini-2.5-flash",
+                    model="gemini-3-flash-preview",
                     prompt=prompt,
                     system_prompt=system_prompt,
                     history_messages=history_messages,
-                    api_key=vertex_api_key,
                     **kwargs
                 )
 
@@ -375,16 +374,13 @@ class SimpleRAGAnything:
                 return ""
 
         else:
-            # Use Gemini 2.5 Flash for user queries too (no OpenAI needed)
+            # Use Gemini 3 Flash for user queries
             try:
-                vertex_api_key = os.getenv("VERTEX_AI_API_KEY")
-
                 result = await gemini_complete_if_cache(
-                    model="gemini-2.5-flash",
+                    model="gemini-3-flash-preview",
                     prompt=prompt,
                     system_prompt=system_prompt,
                     history_messages=history_messages,
-                    api_key=vertex_api_key,
                     **kwargs
                 )
 
@@ -400,7 +396,7 @@ class SimpleRAGAnything:
     async def _vision_function(self, prompt: str, system_prompt: str = None, history_messages=[],
                                image_data: str = None, messages=None, **kwargs) -> str:
         """
-        Vision function for multimodal processing using Gemini 2.5 Flash
+        Vision function for multimodal processing using Gemini 3 Flash
         Handles images, tables, and equations
 
         Args:
@@ -443,7 +439,7 @@ class SimpleRAGAnything:
         if self._detect_existing_database():
             if self.non_interactive:
                 # In web server mode, always use existing database
-                print("\n✓ Existing database detected - using existing data (non-interactive mode)")
+                print("\n[OK] Existing database detected - using existing data (non-interactive mode)")
                 self.using_existing_db = True
             else:
                 # Interactive mode - ask user
@@ -451,10 +447,10 @@ class SimpleRAGAnything:
 
                 if choice == "2":  # Build new database
                     self._delete_existing_database()
-                    print("\n✓ Starting fresh with new database")
+                    print("\n[OK] Starting fresh with new database")
                     self.using_existing_db = False
                 else:  # Use existing database
-                    print("\n✓ Using existing database")
+                    print("\n[OK] Using existing database")
                     self.using_existing_db = True
         else:
             self.using_existing_db = False
@@ -469,15 +465,15 @@ class SimpleRAGAnything:
         print("CONFIGURING RAG-ANYTHING FRAMEWORK")
         print("="*70)
         print("[1/3] Setting up multimodal processing")
-        print("   ✓ Images, Tables, Equations enabled")
+        print("   [OK] Images, Tables, Equations enabled")
         print("[2/3] Configuring MinerU parser")
-        print("   ✓ Auto parse method")
+        print("   [OK] Auto parse method")
         if self.using_existing_db:
             print("[3/3] Database setup")
-            print("   ✓ Loading existing knowledge graph")
+            print("   [OK] Loading existing knowledge graph")
         else:
             print("[3/3] Database setup")
-            print("   ✓ Preparing new knowledge graph storage")
+            print("   [OK] Preparing new knowledge graph storage")
 
         # RAG-Anything configuration
         config = RAGAnythingConfig(
@@ -520,28 +516,28 @@ class SimpleRAGAnything:
             # Add reranker BEFORE initialization
             if bge_rerank_async is not None:
                 lightrag_instance.rerank_model_func = bge_rerank_async
-                print("   ✓ BGE Reranker v2-m3 configured (GPU-accelerated, 8GB VRAM optimized)")
-                print(f"   ✓ Reranker function: {lightrag_instance.rerank_model_func.__name__}")
+                print("   [OK] BGE Reranker v2-m3 configured (GPU-accelerated, 8GB VRAM optimized)")
+                print(f"   [OK] Reranker function: {lightrag_instance.rerank_model_func.__name__}")
             else:
-                print("   ✗ Reranker not available - BGE module not loaded")
-                print("   ℹ Install sentence-transformers for GPU-accelerated reranking")
+                print("   [X] Reranker not available - BGE module not loaded")
+                print("   [i] Install sentence-transformers for GPU-accelerated reranking")
 
             print("[2/3] Loading existing knowledge graph data...")
             await lightrag_instance.initialize_storages()
             await initialize_pipeline_status()
-            print("   ✓ Knowledge graph loaded")
+            print("   [OK] Knowledge graph loaded")
 
             print("[3/3] Connecting to RAG-Anything...")
             self.rag_anything = RAGAnything(
                 lightrag=lightrag_instance,  # Pass existing LightRAG instance
                 vision_model_func=self._vision_function
             )
-            
-            print("   ✓ RAG-Anything connected to existing database")
+
+            print("   [OK] RAG-Anything connected to existing database")
         else:
             # For new database, create RAGAnything with config
             print("[1/2] Verifying MinerU installation...")
-            print("   ✓ MinerU verified")
+            print("   [OK] MinerU verified")
             print("[2/2] Setting up LightRAG backend...")
 
             self.rag_anything = RAGAnything(
@@ -550,27 +546,27 @@ class SimpleRAGAnything:
                 vision_model_func=self._vision_function,
                 embedding_func=self.embedding_func
             )
-            
+
             # Add reranker if available
             if bge_rerank_async is not None:
                 self.rag_anything.lightrag.rerank_model_func = bge_rerank_async
-                print("   ✓ BGE Reranker v2-m3 enabled (GPU-accelerated, 8GB VRAM optimized)")
-                print(f"   ✓ Reranker function: {self.rag_anything.lightrag.rerank_model_func.__name__}")
+                print("   [OK] BGE Reranker v2-m3 enabled (GPU-accelerated, 8GB VRAM optimized)")
+                print(f"   [OK] Reranker function: {self.rag_anything.lightrag.rerank_model_func.__name__}")
             else:
-                print("   ✗ Reranker not available - BGE module not loaded")
-                print("   ℹ Install sentence-transformers for GPU-accelerated reranking")
-            
-            print("   ✓ Graph storage files created")
+                print("   [X] Reranker not available - BGE module not loaded")
+                print("   [i] Install sentence-transformers for GPU-accelerated reranking")
+
+            print("   [OK] Graph storage files created")
 
         print("\n" + "="*70)
-        print("✓ INITIALIZATION COMPLETE")
+        print("[OK] INITIALIZATION COMPLETE")
         print("="*70)
         print("Configuration:")
-        print("   • Multimodal: Images, Tables, Equations")
-        print("   • Embedding: EmbeddingGemma 308M (GPU)")
-        print("   • LLM: Gemini 2.5 Flash (Entity Extraction + Queries)")
-        print("   • Vision: Gemini 2.5 Flash (Multimodal)")
-        print("   • Chunk Size: 2000 tokens (LLM supports up to 1M tokens)")
+        print("   - Multimodal: Images, Tables, Equations")
+        print("   - Embedding: EmbeddingGemma 308M (GPU)")
+        print("   - LLM: Gemini 3 Flash (Entity Extraction + Queries)")
+        print("   - Vision: Gemini 3 Flash (Multimodal)")
+        print("   - Chunk Size: 2000 tokens (LLM supports up to 1M tokens)")
     
     
     async def process_vault(self):
@@ -681,29 +677,29 @@ class SimpleRAGAnything:
         
         # Print comprehensive summary
         print("\n" + "="*70)
-        print("✓ VAULT PROCESSING COMPLETE!")
+        print("[OK] VAULT PROCESSING COMPLETE!")
         print("="*70)
         print("\nProcessing Summary:")
-        print(f"   • Files Processed: {stats['total_files']}")
-        print(f"   • Chunks Created: {stats['total_chunks']}")
-        print(f"   • Success Rate: {(successful_chunks/len(chunks))*100:.1f}%")
-        print(f"   • Wikilinks Preserved: {stats['total_wikilinks']}")
-        print(f"   • Tags Preserved: {stats['total_tags']}")
+        print(f"   - Files Processed: {stats['total_files']}")
+        print(f"   - Chunks Created: {stats['total_chunks']}")
+        print(f"   - Success Rate: {(successful_chunks/len(chunks))*100:.1f}%")
+        print(f"   - Wikilinks Preserved: {stats['total_wikilinks']}")
+        print(f"   - Tags Preserved: {stats['total_tags']}")
 
         print("\nKnowledge Graph Statistics:")
-        print(f"   • Successful Chunks: {successful_chunks}")
-        print(f"   • Failed Chunks: {failed_chunks}")
+        print(f"   - Successful Chunks: {successful_chunks}")
+        print(f"   - Failed Chunks: {failed_chunks}")
 
         print("\nDatabase Location:")
-        print(f"   • Storage: {self.working_dir}")
+        print(f"   - Storage: {self.working_dir}")
 
         print("\nModel Configuration:")
-        print("   • Extraction: GPT-5-nano (cheap)")
-        print("   • Queries: GPT-5-mini (quality)")
-        print("   • Embeddings: EmbeddingGemma 308M (free, GPU)")
+        print("   - Extraction: GPT-5-nano (cheap)")
+        print("   - Queries: GPT-5-mini (quality)")
+        print("   - Embeddings: EmbeddingGemma 308M (free, GPU)")
 
         print("\n" + "="*70)
-        print("✓ SYSTEM READY FOR QUERIES")
+        print("[OK] SYSTEM READY FOR QUERIES")
         print("="*70)
     
     async def query(self, question: str, mode: str = "hybrid") -> str:

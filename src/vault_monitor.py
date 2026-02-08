@@ -38,23 +38,39 @@ class VaultMonitor:
             try:
                 with open(self.tracking_file, 'r', encoding='utf-8') as f:
                     self.file_registry = json.load(f)
-                print(f"✓ Loaded tracking data: {len(self.file_registry)} files tracked")
+                print(f"[OK] Loaded tracking data: {len(self.file_registry)} files tracked")
             except Exception as e:
-                print(f"⚠️  Warning: Could not load tracking data: {e}")
+                print(f"[WARN] Could not load tracking data: {e}")
                 self.file_registry = {}
         else:
-            print("ℹ️  No existing tracking data found - will create new")
+            print("[INFO] No existing tracking data found - will create new")
             self.file_registry = {}
     
     def _save_tracking_data(self):
-        """Save file tracking data"""
+        """Save file tracking data with atomic write to prevent corruption"""
         try:
             os.makedirs(os.path.dirname(self.tracking_file), exist_ok=True)
-            with open(self.tracking_file, 'w', encoding='utf-8') as f:
+
+            # Write to temp file first, then atomic rename
+            # This prevents data corruption if process crashes mid-write
+            temp_file = self.tracking_file + '.tmp'
+            with open(temp_file, 'w', encoding='utf-8') as f:
                 json.dump(self.file_registry, f, indent=2, ensure_ascii=False)
-            print(f"✓ Saved tracking data: {len(self.file_registry)} files")
+
+            # Atomic rename (works on both Windows and Unix)
+            # If this fails, the original file remains intact
+            os.replace(temp_file, self.tracking_file)
+
+            print(f"[OK] Saved tracking data: {len(self.file_registry)} files")
         except Exception as e:
-            print(f"❌ Error saving tracking data: {e}")
+            print(f"[ERROR] Error saving tracking data: {e}")
+            # Clean up temp file if it exists
+            temp_file = self.tracking_file + '.tmp'
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
     
     def _compute_file_hash(self, file_path: str) -> str:
         """
@@ -70,7 +86,7 @@ class VaultMonitor:
             with open(file_path, 'rb') as f:
                 return hashlib.md5(f.read()).hexdigest()
         except Exception as e:
-            print(f"⚠️  Warning: Could not hash {file_path}: {e}")
+            print(f"[WARN] Could not hash {file_path}: {e}")
             return ""
     
     def _get_file_info(self, file_path: str) -> dict:
@@ -92,7 +108,7 @@ class VaultMonitor:
                 "last_processed": datetime.now().isoformat()
             }
         except Exception as e:
-            print(f"⚠️  Warning: Could not get info for {file_path}: {e}")
+            print(f"[WARN] Could not get info for {file_path}: {e}")
             return {}
     
     def scan_vault(self) -> Tuple[List[str], List[str], List[str]]:
@@ -142,12 +158,12 @@ class VaultMonitor:
         deleted_files = list(tracked_files - current_files)
         
         # Print summary
-        print(f"\n📊 Scan Results:")
-        print(f"   • Total files in vault: {len(current_files)}")
-        print(f"   • Tracked files: {len(tracked_files)}")
-        print(f"   • New files: {len(new_files)}")
-        print(f"   • Modified files: {len(modified_files)}")
-        print(f"   • Deleted files: {len(deleted_files)}")
+        print(f"\n[STATS] Scan Results:")
+        print(f"   - Total files in vault: {len(current_files)}")
+        print(f"   - Tracked files: {len(tracked_files)}")
+        print(f"   - New files: {len(new_files)}")
+        print(f"   - Modified files: {len(modified_files)}")
+        print(f"   - Deleted files: {len(deleted_files)}")
         
         return new_files, modified_files, deleted_files
     
@@ -254,7 +270,7 @@ class IncrementalVaultUpdater:
             new_files: List of new file paths (relative)
         """
         if not new_files:
-            print("\nℹ️  No new files to process")
+            print("\n[INFO] No new files to process")
             return
         
         print(f"\n{'='*70}")
@@ -270,11 +286,11 @@ class IncrementalVaultUpdater:
                 chunks = self.chunker.process_markdown_file(Path(abs_path))
                 
                 if not chunks:
-                    print(f"   ⚠️  No chunks generated")
+                    print(f"   [WARN] No chunks generated")
                     continue
-                
-                print(f"   ✓ Generated {len(chunks)} chunks")
-                
+
+                print(f"   [OK] Generated {len(chunks)} chunks")
+
                 # Convert to content list format
                 content_list = []
                 for idx, chunk in enumerate(chunks):
@@ -284,7 +300,7 @@ class IncrementalVaultUpdater:
                         "page_idx": idx  # Use enumerate index
                     }
                     content_list.append(content_item)
-                
+
                 # Generate doc ID
                 doc_id = self.monitor.generate_doc_id(file_path)
                 
@@ -299,15 +315,15 @@ class IncrementalVaultUpdater:
                 # Mark as processed
                 self.monitor.mark_file_processed(file_path, doc_id)
                 
-                print(f"   ✓ Added to RAG database (doc_id: {doc_id})")
-                
+                print(f"   [OK] Added to RAG database (doc_id: {doc_id})")
+
             except Exception as e:
-                print(f"   ❌ Error processing {file_path}: {e}")
+                print(f"   [ERROR] Error processing {file_path}: {e}")
         
         # Save tracking data
         self.monitor._save_tracking_data()
         
-        print(f"\n✓ Completed processing new files")
+        print(f"\n[OK] Completed processing new files")
     
     async def process_modified_files(self, modified_files: List[str]):
         """
@@ -317,7 +333,7 @@ class IncrementalVaultUpdater:
             modified_files: List of modified file paths (relative)
         """
         if not modified_files:
-            print("\nℹ️  No modified files to process")
+            print("\n[INFO] No modified files to process")
             return
         
         print(f"\n{'='*70}")
@@ -334,7 +350,7 @@ class IncrementalVaultUpdater:
                 
                 if doc_id:
                     # Delete old version
-                    print(f"   🗑️  Removing old version (doc_id: {doc_id})")
+                    print(f"   [DEL] Removing old version (doc_id: {doc_id})")
                     await self.rag.rag_anything.lightrag.adelete_by_doc_id(doc_id)
                 else:
                     # Generate new doc ID if not tracked
@@ -344,11 +360,11 @@ class IncrementalVaultUpdater:
                 chunks = self.chunker.process_markdown_file(Path(abs_path))
                 
                 if not chunks:
-                    print(f"   ⚠️  No chunks generated")
+                    print(f"   [WARN] No chunks generated")
                     continue
-                
-                print(f"   ✓ Generated {len(chunks)} chunks")
-                
+
+                print(f"   [OK] Generated {len(chunks)} chunks")
+
                 # Convert to content list format
                 content_list = []
                 for idx, chunk in enumerate(chunks):
@@ -358,7 +374,7 @@ class IncrementalVaultUpdater:
                         "page_idx": idx  # Use enumerate index
                     }
                     content_list.append(content_item)
-                
+
                 # Insert updated version
                 await self.rag.rag_anything.insert_content_list(
                     content_list=content_list,
@@ -370,15 +386,15 @@ class IncrementalVaultUpdater:
                 # Update tracking
                 self.monitor.mark_file_processed(file_path, doc_id)
                 
-                print(f"   ✓ Updated in RAG database")
-                
+                print(f"   [OK] Updated in RAG database")
+
             except Exception as e:
-                print(f"   ❌ Error updating {file_path}: {e}")
+                print(f"   [ERROR] Error updating {file_path}: {e}")
         
         # Save tracking data
         self.monitor._save_tracking_data()
         
-        print(f"\n✓ Completed processing modified files")
+        print(f"\n[OK] Completed processing modified files")
     
     async def process_deleted_files(self, deleted_files: List[str]):
         """
@@ -388,7 +404,7 @@ class IncrementalVaultUpdater:
             deleted_files: List of deleted file paths (relative)
         """
         if not deleted_files:
-            print("\nℹ️  No deleted files to process")
+            print("\n[INFO] No deleted files to process")
             return
         
         print(f"\n{'='*70}")
@@ -399,7 +415,7 @@ class IncrementalVaultUpdater:
         doc_ids = self.monitor.remove_deleted_files(deleted_files)
         
         if not doc_ids:
-            print("\nℹ️  No documents to remove from RAG")
+            print("\n[INFO] No documents to remove from RAG")
             return
         
         # Remove from RAG
@@ -407,11 +423,11 @@ class IncrementalVaultUpdater:
             print(f"\n[{i}/{len(doc_ids)}] Removing: {doc_id}")
             try:
                 await self.rag.rag_anything.lightrag.adelete_by_doc_id(doc_id)
-                print(f"   ✓ Removed from RAG database")
+                print(f"   [OK] Removed from RAG database")
             except Exception as e:
-                print(f"   ❌ Error removing {doc_id}: {e}")
+                print(f"   [ERROR] Error removing {doc_id}: {e}")
         
-        print(f"\n✓ Completed processing deleted files")
+        print(f"\n[OK] Completed processing deleted files")
     
     async def sync_vault(self):
         """
@@ -427,10 +443,10 @@ class IncrementalVaultUpdater:
         total_changes = len(new_files) + len(modified_files) + len(deleted_files)
         
         if total_changes == 0:
-            print("\n✅ Vault is up to date - no changes detected")
+            print("\n[OK] Vault is up to date - no changes detected")
             return
-        
-        print(f"\n🔄 Synchronizing {total_changes} changes...")
+
+        print(f"\n[SYNC] Synchronizing {total_changes} changes...")
         
         # Process changes
         await self.process_deleted_files(deleted_files)
@@ -438,9 +454,9 @@ class IncrementalVaultUpdater:
         await self.process_new_files(new_files)
         
         print("\n" + "="*70)
-        print("✅ VAULT SYNC COMPLETE")
+        print("[OK] VAULT SYNC COMPLETE")
         print("="*70)
-        print(f"   • New files added: {len(new_files)}")
-        print(f"   • Files updated: {len(modified_files)}")
-        print(f"   • Files removed: {len(deleted_files)}")
-        print(f"   • Total files tracked: {len(self.monitor.file_registry)}")
+        print(f"   - New files added: {len(new_files)}")
+        print(f"   - Files updated: {len(modified_files)}")
+        print(f"   - Files removed: {len(deleted_files)}")
+        print(f"   - Total files tracked: {len(self.monitor.file_registry)}")

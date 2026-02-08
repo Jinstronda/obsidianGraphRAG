@@ -18,18 +18,18 @@ print("\n[1/4] Checking GPU...")
 try:
     import torch
     if torch.cuda.is_available():
-        print(f"   ✓ GPU Detected: {torch.cuda.get_device_name(0)}")
-        print(f"   ✓ GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
-        print(f"   ✓ CUDA Version: {torch.version.cuda}")
+        print(f"   [OK] GPU Detected: {torch.cuda.get_device_name(0)}")
+        print(f"   [OK] GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.2f} GB")
+        print(f"   [OK] CUDA Version: {torch.version.cuda}")
     else:
-        print("   ✗ No GPU detected - reranker will run on CPU (slower)")
+        print("   [X] No GPU detected - reranker will run on CPU (slower)")
 except Exception as e:
     print(f"   [ERROR] {e}")
 
 print("\n[2/4] Installing sentence-transformers (if needed)...")
 try:
     from sentence_transformers import CrossEncoder
-    print("   ✓ sentence-transformers already installed")
+    print("   [OK] sentence-transformers already installed")
 except ImportError:
     print("   Installing sentence-transformers...")
     os.system("pip install sentence-transformers")
@@ -60,7 +60,7 @@ def get_reranker_model():
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f"Loading BGE reranker on {{device.upper()}}...")
         _reranker_model = CrossEncoder('{RERANKER_MODEL}', device=device, max_length=512)
-        print(f"   ✓ BGE reranker loaded successfully")
+        print(f"   [OK] BGE reranker loaded successfully")
     
     return _reranker_model
 
@@ -111,7 +111,7 @@ reranker_file = "./src/bge_reranker.py"
 with open(reranker_file, 'w', encoding='utf-8') as f:
     f.write(reranker_code)
 
-print(f"   ✓ Reranker function saved to: {reranker_file}")
+print(f"   [OK] Reranker function saved to: {reranker_file}")
 
 print("\n[4/4] Testing reranker model...")
 try:
@@ -135,9 +135,9 @@ try:
     pairs = [[query, doc] for doc in docs]
     scores = model.predict(pairs, show_progress_bar=False)
     
-    print(f"   ✓ Model loaded successfully")
-    print(f"   ✓ Model size: ~350MB")
-    print(f"   ✓ Max sequence length: 512 tokens")
+    print(f"   [OK] Model loaded successfully")
+    print(f"   [OK] Model size: ~350MB")
+    print(f"   [OK] Max sequence length: 512 tokens")
     
     print(f"\n   Test reranking results:")
     for doc, score in zip(docs, scores):
@@ -151,10 +151,10 @@ print("\n" + "="*70)
 print("SETUP COMPLETE!")
 print("="*70)
 
-print("\n✓ BGE Reranker is ready to use!")
-print(f"✓ Model: {RERANKER_MODEL}")
-print(f"✓ Size: ~350MB")
-print(f"✓ Device: {'GPU (RTX 3060)' if torch.cuda.is_available() else 'CPU'}")
+print("\n[OK] BGE Reranker is ready to use!")
+print(f"[OK] Model: {RERANKER_MODEL}")
+print(f"[OK] Size: ~350MB")
+print(f"[OK] Device: {'GPU (RTX 3060)' if torch.cuda.is_available() else 'CPU'}")
 
 print("\nTo use the reranker in your code:")
 print("```python")
@@ -167,7 +167,7 @@ print("    print(f'Score: {score:.4f} - {doc}')")
 print("```")
 
 print("\nThe reranker will automatically:")
-print("✓ Use GPU if available (RTX 3060)")
-print("✓ Fall back to CPU if needed")
-print("✓ Cache the model after first load")
-print("✓ Provide relevance scores for better ranking")
+print("[OK] Use GPU if available (RTX 3060)")
+print("[OK] Fall back to CPU if needed")
+print("[OK] Cache the model after first load")
+print("[OK] Provide relevance scores for better ranking")

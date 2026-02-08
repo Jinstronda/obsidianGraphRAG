@@ -93,19 +93,19 @@ async def main():
         print("Interactive Query Mode")
         print("="*60)
         print("Your Obsidian vault has been processed with:")
-        print("✅ 2K token chunks with wikilinks preserved")
-        print("✅ Metadata and file connections maintained")
-        print("✅ EmbeddingGemma 308M embeddings")
-        print("✅ RAG-Anything multimodal processing")
+        print("[OK] 2K token chunks with wikilinks preserved")
+        print("[OK] Metadata and file connections maintained")
+        print("[OK] EmbeddingGemma 308M embeddings")
+        print("[OK] RAG-Anything multimodal processing")
         print("")
         print("Type your questions (or 'quit' to exit):")
         
         while True:
             try:
-                question = input("\n❓ Question: ").strip()
+                question = input("\nQuestion: ").strip()
                 
                 if question.lower() in ['quit', 'exit', 'q']:
-                    print("👋 Goodbye!")
+                    print("Goodbye!")
                     break
                 
                 if not question:
@@ -113,10 +113,10 @@ async def main():
                 
                 # Ask question
                 result = await rag.query(question)
-                print(f"\n📝 Answer:\n{result}")
-                
+                print(f"\nAnswer:\n{result}")
+
             except KeyboardInterrupt:
-                print("\n👋 Goodbye!")
+                print("\nGoodbye!")
                 break
             except Exception as e:
                 print(f"Error: {e}")
