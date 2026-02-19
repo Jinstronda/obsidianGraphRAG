@@ -6,7 +6,9 @@ Auto-run RAG system with option to rebuild database automatically
 import os
 import sys
 import asyncio
-from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -35,8 +37,12 @@ async def main():
     check_conda_environment()
 
     # Setup paths
-    vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
-    working_dir = os.getenv("WORKING_DIR", "./rag_storage")
+    vault_path = os.getenv("OBSIDIAN_VAULT_PATH")
+    working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
+
+    if not vault_path:
+        print("ERROR: OBSIDIAN_VAULT_PATH not set. Set it in .env or export it.")
+        sys.exit(1)
 
     os.makedirs(working_dir, exist_ok=True)
 

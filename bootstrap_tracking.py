@@ -7,6 +7,9 @@ Marks all existing vault files as already processed, so incremental sync only ha
 import os
 import sys
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -101,8 +104,12 @@ def bootstrap_tracking(vault_path: str, working_dir: str, cutoff_days: int = 1):
 
 def main():
     """Main function"""
-    vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
+    vault_path = os.getenv("OBSIDIAN_VAULT_PATH")
     working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
+
+    if not vault_path:
+        print("[ERROR] OBSIDIAN_VAULT_PATH not set. Set it in .env or export it.")
+        return
     
     print("\n" + "="*70)
     print("BOOTSTRAP TRACKING SETUP")

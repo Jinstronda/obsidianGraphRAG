@@ -9,6 +9,9 @@ import os
 import sys
 import asyncio
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -33,8 +36,14 @@ def setup_environment():
     print("Setting up environment...")
     
     # Set default paths
-    vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
-    working_dir = os.getenv("WORKING_DIR", "./rag_storage")
+    vault_path = os.getenv("OBSIDIAN_VAULT_PATH")
+    working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
+
+    if not vault_path:
+        print("ERROR: OBSIDIAN_VAULT_PATH not set")
+        print("Set it in your .env file or export it:")
+        print("   export OBSIDIAN_VAULT_PATH=/path/to/your/vault")
+        sys.exit(1)
     
     # Create directories if they don't exist
     os.makedirs(working_dir, exist_ok=True)

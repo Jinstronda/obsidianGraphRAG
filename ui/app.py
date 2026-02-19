@@ -46,7 +46,9 @@ async def startup_event():
     print("=" * 60)
 
     # Configuration from environment or defaults
-    vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
+    vault_path = os.getenv("OBSIDIAN_VAULT_PATH")
+    if not vault_path:
+        raise RuntimeError("OBSIDIAN_VAULT_PATH not set. Set it in .env or export it.")
     working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
 
     print(f"Vault: {vault_path}")
@@ -70,7 +72,6 @@ async def startup_event():
 
         print()
         print("RAG system ready!")
-        print("Server running at: http://localhost:8000")
         print("=" * 60)
 
     except Exception as e:
@@ -174,15 +175,11 @@ async def websocket_chat(websocket: WebSocket):
                                 print(f"Answer (confidence: {confidence}, sources: {sources}):")
                                 print(answer[:200] + "..." if len(answer) > 200 else answer)
 
-                                # Stream answer to client
-                                words = answer.split()
-                                for i, word in enumerate(words):
-                                    chunk = word if i == 0 else f" {word}"
-                                    await websocket.send_json({
-                                        "type": "chunk",
-                                        "content": chunk
-                                    })
-                                    await asyncio.sleep(0.03)
+                                # Send full answer at once
+                                await websocket.send_json({
+                                    "type": "chunk",
+                                    "content": answer
+                                })
 
                                 # Send metadata
                                 await websocket.send_json({
@@ -202,15 +199,11 @@ async def websocket_chat(websocket: WebSocket):
                         response = await rag_system.query(user_message, mode=query_mode)
                         print(response[:200] + "..." if len(response) > 200 else response)
 
-                        # Stream response to client word by word
-                        words = response.split()
-                        for i, word in enumerate(words):
-                            chunk = word if i == 0 else f" {word}"
-                            await websocket.send_json({
-                                "type": "chunk",
-                                "content": chunk
-                            })
-                            await asyncio.sleep(0.03)
+                        # Send full response at once
+                        await websocket.send_json({
+                            "type": "chunk",
+                            "content": response
+                        })
 
                         await websocket.send_json({"type": "done"})
 
@@ -234,21 +227,28 @@ async def websocket_chat(websocket: WebSocket):
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    import psutil
-    import torch
-    
     health_data = {
         "status": "healthy",
         "rag_initialized": rag_system is not None,
-        "gpu_available": torch.cuda.is_available(),
-        "memory_usage_mb": psutil.Process().memory_info().rss / 1024 / 1024,
+        "gpu_available": False,
     }
-    
-    if torch.cuda.is_available():
-        health_data["gpu_name"] = torch.cuda.get_device_name(0)
-        health_data["gpu_memory_allocated_mb"] = torch.cuda.memory_allocated(0) / 1024 / 1024
-        health_data["gpu_memory_reserved_mb"] = torch.cuda.memory_reserved(0) / 1024 / 1024
-    
+
+    try:
+        import psutil
+        health_data["memory_usage_mb"] = psutil.Process().memory_info().rss / 1024 / 1024
+    except ImportError:
+        pass
+
+    try:
+        import torch
+        health_data["gpu_available"] = torch.cuda.is_available()
+        if torch.cuda.is_available():
+            health_data["gpu_name"] = torch.cuda.get_device_name(0)
+            health_data["gpu_memory_allocated_mb"] = torch.cuda.memory_allocated(0) / 1024 / 1024
+            health_data["gpu_memory_reserved_mb"] = torch.cuda.memory_reserved(0) / 1024 / 1024
+    except ImportError:
+        pass
+
     return health_data
 
 
@@ -358,4 +358,4 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")

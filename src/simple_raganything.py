@@ -44,8 +44,14 @@ except ImportError:
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client for query rewriting
-openai_client = OpenAI()
+# Lazy-initialized OpenAI client for query rewriting
+_openai_client = None
+
+def _get_openai_client():
+    global _openai_client
+    if _openai_client is None:
+        _openai_client = OpenAI()
+    return _openai_client
 
 
 class ProgressLoggingHandler(logging.Handler):
@@ -320,7 +326,7 @@ class SimpleRAGAnything:
         
         return embeddings.tolist()
     
-    async def _llm_function(self, prompt: str, system_prompt: str = None, history_messages=[], **kwargs) -> str:
+    async def _llm_function(self, prompt: str, system_prompt: str = None, history_messages=None, **kwargs) -> str:
         """
         LLM function using Gemini 3 Flash for entity extraction
         FIXED: Added debug logging to diagnose prompt issues
@@ -334,17 +340,9 @@ class SimpleRAGAnything:
         Returns:
             Generated text response
         """
-        # DEBUG: Print prompt info to diagnose "I do not have enough information" issue
-        print(f"\n[DEBUG LLM] Prompt length: {len(prompt)} chars")
-        print(f"[DEBUG LLM] Has 'Source Data': {'YES' if 'Source Data' in prompt or 'source data' in prompt.lower() else 'NO'}")
-        print(f"[DEBUG LLM] System prompt: {'YES' if system_prompt else 'NO'}")
-        
-        # Print first 500 chars of prompt to see structure
-        if len(prompt) > 500:
-            print(f"[DEBUG LLM] Prompt preview (first 500 chars):\n{prompt[:500]}...")
-        else:
-            print(f"[DEBUG LLM] Full prompt:\n{prompt}")
-        
+        if history_messages is None:
+            history_messages = []
+
         # Determine which model to use based on task type
         # Check if this is entity extraction (contains "extract entities" in prompt)
         is_extraction = "extract entities" in prompt.lower() or "extract relations" in prompt.lower()
@@ -393,7 +391,7 @@ class SimpleRAGAnything:
                 print(f"ERROR in Gemini query function: {e}")
                 return ""
     
-    async def _vision_function(self, prompt: str, system_prompt: str = None, history_messages=[],
+    async def _vision_function(self, prompt: str, system_prompt: str = None, history_messages=None,
                                image_data: str = None, messages=None, **kwargs) -> str:
         """
         Vision function for multimodal processing using Gemini 3 Flash
@@ -410,6 +408,9 @@ class SimpleRAGAnything:
         Returns:
             Generated response for multimodal content
         """
+        if history_messages is None:
+            history_messages = []
+
         # Get Vertex AI API key
         vertex_api_key = os.getenv("VERTEX_AI_API_KEY")
 
@@ -694,8 +695,8 @@ class SimpleRAGAnything:
         print(f"   - Storage: {self.working_dir}")
 
         print("\nModel Configuration:")
-        print("   - Extraction: GPT-5-nano (cheap)")
-        print("   - Queries: GPT-5-mini (quality)")
+        print("   - Extraction: Gemini 3 Flash")
+        print("   - Queries: Gemini 3 Flash")
         print("   - Embeddings: EmbeddingGemma 308M (free, GPU)")
 
         print("\n" + "="*70)
@@ -738,7 +739,7 @@ class SimpleRAGAnything:
     def _rewrite_query(self, question: str) -> str:
         """Rewrite natural language question to optimized search terms"""
         try:
-            response = openai_client.responses.create(
+            response = _get_openai_client().responses.create(
                 model="gpt-5-mini",
                 input=f"Extract key search terms from: '{question}'. Remove question words (who/what/when/where/why/how), keep only core concepts and names. Return only the search terms, no explanation."
             )
@@ -802,13 +803,9 @@ Instructions:
 Answer:"""
 
             # Step 4: Call Gemini LLM with the combined prompt
-            from .gemini_llm import gemini_complete_if_cache
-
-            response = await gemini_complete_if_cache(
+            response = await self._llm_function(
                 prompt=prompt,
                 system_prompt="You are a helpful Obsidian vault assistant. You remember previous conversation and answer naturally using information from the user's notes.",
-                history_messages=[],  # Don't duplicate history (already in prompt)
-                keyword_extraction=False
             )
 
             print(f"Query with history completed successfully!")
@@ -873,8 +870,12 @@ async def main():
     check_conda_environment()
     
     # Configuration - Default to your Obsidian vault
-    vault_path = os.getenv("OBSIDIAN_VAULT_PATH", r"C:\Users\joaop\Documents\Obsidian Vault\Segundo Cerebro")
-    working_dir = os.getenv("WORKING_DIR", "./rag_storage")
+    vault_path = os.getenv("OBSIDIAN_VAULT_PATH")
+    working_dir = os.getenv("RAG_WORKING_DIR", "./rag_storage")
+
+    if not vault_path:
+        print("ERROR: OBSIDIAN_VAULT_PATH not set. Set it in .env or export it.")
+        sys.exit(1)
     
     print("Simple RAG-Anything with EmbeddingGemma 308M")
     print("Conda Environment: turing0.1")

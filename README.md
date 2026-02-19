@@ -10,7 +10,7 @@ The system reads your notes, builds a knowledge graph, and lets you query it lik
 
 This solves what Matthew McConaughey wanted: an LLM based only on your own data. Not the entire internet. Just your thoughts, your notes, your knowledge.
 
-It works locally. The embeddings and reranking run on your machine. Only the LLM calls go to Gemini's API, which is free.
+It works locally. The embeddings and reranking run on your machine. The LLM calls go to Gemini's API (free tier). Long conversations use OpenAI for context compaction.
 
 ## How It Works
 
@@ -32,9 +32,11 @@ The knowledge graph is the important part. It doesn't just search for keywords. 
 
 Five steps. Takes about 5 minutes.
 
-### 1. Get an API Key
+### 1. Get API Keys
 
-Go to https://aistudio.google.com/apikey and create a free Gemini API key.
+**Gemini** (required): Go to https://aistudio.google.com/apikey and create a free API key.
+
+**OpenAI** (required): Go to https://platform.openai.com/api-keys and create a key. Used for context compaction in long conversations.
 
 ### 2. Configure
 
@@ -42,12 +44,11 @@ Go to https://aistudio.google.com/apikey and create a free Gemini API key.
 # Copy the template
 cp .env.example .env
 
-# Edit .env and add two things:
-# - Your API key
+# Edit .env and add:
+# - Your Gemini API key
+# - Your OpenAI API key
 # - Path to your Obsidian vault
 ```
-
-That's it. Two lines in a config file.
 
 ### 3. Install
 
@@ -111,7 +112,7 @@ Three models work together:
 
 **BGE Reranker v2-m3** - Reranks results for better relevance. Runs locally. Free. Improves accuracy by 15-30%.
 
-**Gemini 2.5 Flash** - Generates answers. API call. Currently free with rate limits.
+**Gemini 3 Flash** - Generates answers. API call. Currently free with rate limits.
 
 ### Storage
 
@@ -149,13 +150,11 @@ Five new notes take 30 seconds to sync. Compare that to rebuilding 1000 notes, w
 
 ## Cost
 
-Everything is free.
+Almost free.
 
-Gemini 2.5 Flash is free. The embeddings run locally. The reranking runs locally. No API costs.
+Gemini 3 Flash is free. The embeddings run locally. The reranking runs locally. Context compaction uses OpenAI's GPT-5-Mini, which costs fractions of a cent per call and only triggers during long conversations.
 
 Google's free tier has rate limits (15 requests per minute), but that's fine for personal use. If you hit limits, the system waits and retries.
-
-For heavy usage, the paid tier costs about $0.001 per query. Still cheap.
 
 ## Requirements
 
@@ -167,6 +166,7 @@ For heavy usage, the paid tier costs about $0.001 per query. Still cheap.
 
 **API**:
 - Gemini API key (free tier works)
+- OpenAI API key (for context compaction in long chats)
 
 **Your Vault**:
 - Any Obsidian vault
@@ -267,7 +267,7 @@ Built on:
 - LightRAG (knowledge graph backend)
 - EmbeddingGemma (local embeddings)
 - BGE Reranker (local reranking)
-- Gemini 2.5 Flash (LLM)
+- Gemini 3 Flash (LLM)
 
 Frontend is vanilla JavaScript. No build step. Backend is FastAPI with WebSocket for streaming.
 

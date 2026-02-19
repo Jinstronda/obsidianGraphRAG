@@ -64,7 +64,8 @@ class ContextManager:
 
         for attempt in range(max_retries):
             try:
-                response = self.client.chat.completions.create(
+                response = await asyncio.to_thread(
+                    self.client.chat.completions.create,
                     model="gpt-5-mini",
                     max_completion_tokens=5000,
                     messages=[{
@@ -81,7 +82,7 @@ Format as a detailed but concise summary. Include specific information, not vagu
 Conversation:
 {conversation_text}"""
                     }]
-                )
+                )  # end asyncio.to_thread
 
                 summary = response.choices[0].message.content
                 logger.info(f"[Context] Compacted to summary ({len(summary)} chars)")

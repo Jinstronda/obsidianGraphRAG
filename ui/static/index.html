@@ -686,18 +686,23 @@
 
             ws.onopen = () => {
                 console.log('WebSocket connected');
-                reconnectAttempts = 0;  // Reset on successful connection
+                const wasReconnecting = reconnectAttempts > 0;
+                reconnectAttempts = 0;
                 updateConnectionStatus(true);
                 updateInputState();
                 checkSystemHealth();
-                if (reconnectAttempts > 0) {
+                if (wasReconnecting) {
                     showToast('Reconnected successfully!', 'success');
                 }
             };
 
             ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                handleWebSocketMessage(data);
+                try {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                } catch (err) {
+                    console.error('Failed to parse WebSocket message:', err);
+                }
             };
 
             ws.onclose = (event) => {
@@ -842,15 +847,29 @@
 
             // Update steps list
             const stepsList = stepsContainer.querySelector('.steps-list');
-            stepsList.innerHTML = currentAgentSteps.map(step => `
-                <div class="agent-step">
-                    <div class="agent-step-number">${step.step}</div>
-                    <div>
-                        <div class="agent-step-tool">${step.tool}</div>
-                        <div class="agent-step-query">"${step.args.query || ''}"</div>
-                    </div>
-                </div>
-            `).join('');
+            stepsList.innerHTML = '';
+            currentAgentSteps.forEach(step => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'agent-step';
+
+                const numDiv = document.createElement('div');
+                numDiv.className = 'agent-step-number';
+                numDiv.textContent = step.step;
+
+                const infoDiv = document.createElement('div');
+                const toolDiv = document.createElement('div');
+                toolDiv.className = 'agent-step-tool';
+                toolDiv.textContent = step.tool;
+                const queryDiv = document.createElement('div');
+                queryDiv.className = 'agent-step-query';
+                queryDiv.textContent = `"${step.args?.query || ''}"`;
+                infoDiv.appendChild(toolDiv);
+                infoDiv.appendChild(queryDiv);
+
+                stepDiv.appendChild(numDiv);
+                stepDiv.appendChild(infoDiv);
+                stepsList.appendChild(stepDiv);
+            });
 
             scrollToBottom();
         }
@@ -1129,16 +1148,23 @@
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
             toast.className = 'toast';
-            
+
             const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
             const color = type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-blue-400';
-            
-            toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="${color} text-xl">${icon}</span>
-                    <span class="text-white">${message}</span>
-                </div>
-            `;
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = `${color} text-xl`;
+            iconSpan.textContent = icon;
+
+            const msgSpan = document.createElement('span');
+            msgSpan.className = 'text-white';
+            msgSpan.textContent = message;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-center gap-3';
+            wrapper.appendChild(iconSpan);
+            wrapper.appendChild(msgSpan);
+            toast.appendChild(wrapper);
             
             document.body.appendChild(toast);
             

@@ -1,4 +1,4 @@
-# RAG-Anything with EmbeddingGemma 308M - Minimal Requirements
+# RAG-Anything with EmbeddingGemma 308M
 # Always run in conda environment turing0.1
 
 # Core RAG-Anything framework
@@ -9,11 +9,14 @@ sentence-transformers
 
 # Environment and utilities
 python-dotenv
-pathlib
+
+# LLM providers
+google-genai
+openai
 
 # Additional dependencies for Obsidian processing
-frontmatter
-dataclasses
+python-frontmatter
+tqdm
 
 # Web UI dependencies
 fastapi
@@ -21,7 +24,3 @@ uvicorn[standard]
 websockets
 aiohttp
 psutil
-
-# Optional: For advanced document parsing
-# mineru  # Uncomment if needed for complex documents
-
