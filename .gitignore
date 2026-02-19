@@ -133,3 +133,4 @@ debug_*.py
 # - ui/ (web interface)
 # - src/ (source code)
 # - *.md (documentation)
+CLAUDE.md
