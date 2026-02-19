@@ -125,12 +125,9 @@ fix_*.py
 llm_function_fix.py
 debug_*.py
 
-# Keep these important files:
-# - README.md
-# - requirements.txt
-# - run_*.py (launcher scripts)
-# - setup_*.py (setup scripts)
-# - ui/ (web interface)
-# - src/ (source code)
-# - *.md (documentation)
+# ===== AI Tool Configs =====
+.claude/
+.cursor/
+.gemini/
+.mcp.json
 CLAUDE.md

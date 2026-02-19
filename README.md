@@ -271,13 +271,6 @@ Built on:
 
 Frontend is vanilla JavaScript. No build step. Backend is FastAPI with WebSocket for streaming.
 
-## Documentation
-
-- `UI_QUICKSTART.md` - Web interface guide
-- `INCREMENTAL_SYNC_GUIDE.md` - How sync works
-- `SOLUTION_SUMMARY.md` - Implementation details
-- `QUICK_FIX_GUIDE.md` - Common problems
-
 ## Contributing
 
 Found a bug? Open an issue.
